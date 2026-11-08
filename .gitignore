@@ -1,0 +1,6 @@
+_audit.html
+_frame.html
+_test_*.html
+_shots/
+.DS_Store
+__pycache__/
