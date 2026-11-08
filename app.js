@@ -1,4 +1,4 @@
-/* Распродажа 11.11 «Шагай Дома», v2: фильтры витрины, галерея пака, проброс меток и метка акции */
+/* Распродажа 11.11 «Шагай Дома», v3: фильтры, полки прилавка, галерея пака, проброс меток и метка акции */
 (function () {
   'use strict';
 
@@ -43,15 +43,39 @@
     }
   }
 
+  /* Полки прилавка: под каждым рядом коробок — доска из Higgsfield. Ряды зависят от ширины и фильтра. */
+  var shelves = document.querySelector('.shelves');
+  var grid = document.getElementById('grid');
+  function placeShelves() {
+    if (!shelves || !grid) return;
+    var rows = {};
+    Array.prototype.forEach.call(grid.querySelectorAll('.gbox'), function (b) {
+      if (b.hidden) return;
+      var top = b.offsetTop, bottom = top + b.offsetHeight;
+      rows[top] = Math.max(rows[top] || 0, bottom);
+    });
+    var out = '';
+    Object.keys(rows).forEach(function (k) {
+      out += '<div class="plank" style="top:' + rows[k] + 'px"></div>';
+    });
+    shelves.innerHTML = out;
+  }
+  var timer;
+  function later() { clearTimeout(timer); timer = setTimeout(placeShelves, 80); }
+  placeShelves();
+  window.addEventListener('resize', later);
+  window.addEventListener('load', placeShelves);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeShelves);
+
   /* Фильтры витрины */
   var chips = document.querySelectorAll('.chip');
-  var cards = document.querySelectorAll('#grid .card');
   Array.prototype.forEach.call(chips, function (chip) {
     chip.addEventListener('click', function () {
       Array.prototype.forEach.call(chips, function (x) { x.classList.toggle('is-on', x === chip); });
-      Array.prototype.forEach.call(cards, function (c) {
+      Array.prototype.forEach.call(grid.querySelectorAll('.gbox'), function (c) {
         c.hidden = !(chip.dataset.aud === 'any' || c.dataset.aud === chip.dataset.aud);
       });
+      placeShelves();
     });
   });
 
