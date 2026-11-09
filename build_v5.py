@@ -58,8 +58,19 @@ def buy_btn(title, price, widget=None, sid=None, ghost=False):
 
 
 def card(p):
-    rows = ''.join(f'<li>{li_icon(n)}<span>{t(n + (" — " + q if q else ""))}</span></li>' for n, q, _ in p['items'])
+    # строка состава: иконка, «название — количество», под ней 1–2 строки сути программы (правки Маши, замена раскрытию)
+    rows = ''.join(f'<li>{li_icon(n)}<span class="pc__item"><b>{t(n + (" — " + q if q else ""))}</b>'
+                   + (f'<small>{t(sub)}</small>' if sub else '') + '</span></li>'
+                   for n, q, sub in p['items'])
     label, ic = AUD[p['aud']]
+    # лид, описание пака и мета-чипы (count / term / note) — как на v4
+    lead = f'<p class="pc__lead">{t(p["lead"])}</p>' if p.get('lead') else ''
+    about = f'<p class="pc__about">{t(p["about"])}</p>' if p.get('about') else ''
+    meta = '<span>' + icon('stack') + t(p['count']) + '</span>'
+    if p.get('term'):
+        meta += '<span>' + icon('clock') + t(p['term']) + '</span>'
+    if p.get('note'):
+        meta += '<span class="pc__chip--no">' + icon('ban') + t(p['note']) + '</span>'
     foot = ''
     if p.get('opts'):
         # 990 ₽ держателям (виджета пока нет) + 2 490 ₽ с клубом на месяц (виджет GetCourse)
@@ -86,7 +97,8 @@ def card(p):
     <span class="pc__aud pc__aud--{p["aud"]}">{icon(ic)}{t(label)}</span>
   </div>
   <div class="pc__body">
-    <h3 class="pc__t">{t(p["title"])}</h3>
+    <h3 class="pc__t">{t(p["title"])}</h3>{lead}{about}
+    <p class="pc__meta">{meta}</p>
     <p class="pc__in">Что внутри:</p>
     <ul class="pc__list">{rows}</ul>
     <div class="pc__foot">{foot}</div>
