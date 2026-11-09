@@ -124,6 +124,21 @@ ICON = {
 }
 
 
+BOLT = '<svg class="{c}" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 1L3.5 13.5h7L8.5 23l12-13.5h-7z"/></svg>'
+SPARK = '<svg class="{c}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 7 4.9 11.2 12 12-7.1.8-11.2 5-12 12-.8-7-4.9-11.2-12-12 7.1-.8 11.2-5 12-12z"/></svg>'
+
+
+def decor(items):
+    # items: (вид, класс-позиция) — вид: bolt / spark / bit (конфетти)
+    out = []
+    for kind, cls in items:
+        if kind == 'bit':
+            out.append(f'<i class="bit {cls}"></i>')
+        else:
+            out.append((BOLT if kind == 'bolt' else SPARK).format(c=kind + ' ' + cls))
+    return '<div class="decor" aria-hidden="true">' + ''.join(out) + '</div>'
+
+
 def icon(name, cls='ic'):
     return '<svg class="' + cls + '" viewBox="0 0 24 24" aria-hidden="true">' + ICON[name] + '</svg>'
 
@@ -216,19 +231,19 @@ def page():
     chips = ''.join(
         f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
         for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
-    legend = ''.join(f'<li class="rv"><span class="legend__ic legend__ic--{k}">{icon(AUD[k][1])}</span><div>{aud_badge(k, "aud")}<p>{t(x)}</p></div></li>'
+    legend = ''.join(f'<li class="rv legend__i legend__i--{k}">{aud_badge(k, "aud")}<p>{t(x)}</p></li>'
                      for k, x in [('members', HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
-    steps = ''.join(f'<li class="rv"><b class="steps__n">{i}</b><span class="steps__ic">{icon(ic)}</span><p>{t(s)}</p></li>' for i, (s, ic) in enumerate(zip(T['HOW'], ['stack', 'form', 'card']), 1))
+    steps = ''.join(f'<li class="rv"><div class="steps__top"><b class="steps__n">{i}</b><span class="steps__ic">{icon(ic)}</span></div><p>{t(s)}</p></li>' for i, (s, ic) in enumerate(zip(T['HOW'], ['stack', 'form', 'card']), 1))
     promo = ''.join(f'<span>{icon("bolt")}{x}</span>' for x in ['Акция 11.11', '−50%', '10–12 ноября', 'Большая распродажа любимых программ'] * 4)
-    faq = ''.join(f'<details class="qa"><summary>{t(q)}</summary><p>{t(a)}</p></details>' for q, a in T['FAQ'])
+    faq = ''.join(f'<details class="qa"{" open" if n == 0 else ""}><summary>{t(q)}</summary><p>{t(a)}</p></details>' for n, (q, a) in enumerate(T['FAQ']))
     return f'''<!doctype html>
-<html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}">
+<html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}" class="v10">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Распродажа 11.11 — паки программ «Шагай Дома»</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#f7f4fc">
+<meta name="theme-color" content="#f8f4fd">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -241,31 +256,34 @@ def page():
   <a class="top__cta" href="#packs">Выбрать пак</a>
 </div></header>
 <main>
-<section class="wrap hero">
-  <div class="hero__card">
-    <div class="hero__text">
-      <span class="hero__pill">Акция 11.11</span>
-      <p class="hero__big" aria-hidden="true">11.11</p>
-      <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
-      <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
-      <a class="hero__cta" href="#packs">Выбрать пак</a>
-      <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
-    </div>
-    <div class="hero__media" aria-hidden="true">
-      <p class="hero__off">−50%</p>
-      <img class="hero__photo" src="assets/hero-cut.webp" alt="">
-      <p class="hero__sticker">Любимые программы в{NB}выгодных наборах</p>
-    </div>
+<section class="hero"><div class="wrap hero__in">
+  <div class="hero__text">
+    <p class="hero__big"><span class="vh">Акция </span>11.11</p>
+    <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
+    <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
+    <a class="hero__cta" href="#packs">Выбрать пак</a>
+    <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
   </div>
-</section>
-<section class="wrap shop" id="packs">
+  <div class="hero__media" aria-hidden="true">
+    <div class="hero__arch"><img class="hero__photo" src="assets/hero-cut.webp" alt=""></div>
+    <svg class="hero__bolt" viewBox="0 0 100 110" preserveAspectRatio="none" aria-hidden="true"><path d="M68 24h22L63 58h15L-9 109l39-44H16z"/></svg>
+    <p class="hero__off">−50%</p>
+    <p class="hero__sticker">Любимые программы в{NB}выгодных наборах</p>
+  </div>
+</div></section>
+<section class="shop" id="packs">
+  {decor([("bolt", "d1"), ("bolt", "d2"), ("bolt", "d3"), ("bolt", "d4"), ("spark", "d5"), ("bit", "c1"), ("bit", "c2"), ("bit", "c3"), ("bit", "c4"), ("bit", "c5"), ("bit", "c6")])}
+  <div class="wrap">
   <h2 class="h2">Паки программ</h2>
   <p class="shop__lead">{t(T["PACKS_LEAD"])}</p>
   <ul class="legend">{legend}</ul>
   <div class="chips">{chips}</div>
   <div class="grid">{"".join(card(p) for p in PACKS)}</div>
+  </div>
 </section>
-<section class="how" id="how"><div class="wrap">
+<section class="how" id="how">
+  {decor([("spark", "s1"), ("spark", "s2"), ("spark", "s3"), ("bolt", "s4"), ("bolt", "s5"), ("bit", "p1"), ("bit", "p2"), ("bit", "p3"), ("bit", "p4"), ("bit", "p5"), ("bit", "p6"), ("bit", "p7")])}
+  <div class="wrap">
   <h2 class="h2">{t(T["HOW_H"])}</h2>
   <ol class="steps">{steps}</ol>
   <a class="hero__cta how__cta" href="#packs">Выбрать пак</a>
@@ -275,7 +293,7 @@ def page():
   {faq}
 </section>
 </main>
-<div class="wrap">{FOOTER}</div>
+<div class="footbg"><p class="footbg__num" aria-hidden="true">11.11</p><div class="wrap">{FOOTER}</div></div>
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>
