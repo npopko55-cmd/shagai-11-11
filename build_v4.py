@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Распродажа 11.11 «Шагай Дома», v4 — одна карточка пака по референсу Димы (светлый фон, фиолетово-розовая гамма).
+"""Распродажа 11.11 «Шагай Дома», страница /v4/ (пятая итерация): шапка, первый экран, паки, как купить, вопросы, подвал.
 
-Собирает v4/index.html. Корень (v3) и v2/ не трогает.
-Состав, названия и цены — из ТЗ Никиты 09.11.2026 (~/Downloads/shagai-v4-ref/TASK.md).
-Новые строки (MEM_SHORT, STUB_BTN, STUB_NOTE) — через na-pero; остальные тексты утверждены в v2.
-Оплата: виджеты GetCourse для паков 2, 4, 5, 6 открываются в модальном окне (app.js грузит их по клику).
-Запуск: python3 build_v4.py
+Визуал — по референсу Димы (~/Downloads/shagai-v4-ref/dima_reference_desktop.jpg): светлый фон, фиолетово-розовая гамма.
+Паки — по официальной странице Маши в GetCourse и её правкам 09.11.2026 (фразы для держателей, цены пака 1, описания программ).
+Новые тексты — через na-pero 09.11.2026; фразы Маши — дословно. Фото — настоящие кадры клуба (студия, красная форма),
+фон фото Валерии убран в Higgsfield (сессия Trandwatching), кроме тарелки меню (сгенерирована там же ранее).
+Оплата: виджеты GetCourse паков 2, 4, 5, 6 открываются в окне (app.js); у паков 1 и 3 кнопки пока без действия.
+Корень (v3) и v2/ не трогает. Запуск: python3 build_v4.py
 """
 import html
 import pathlib
@@ -28,46 +29,76 @@ AUD = {
     'all': ('Для держателей абонемента и новых пользователей', 'users'),
 }
 
-# Названия, аудитории, состав и варианты цены — по официальной странице паков Маши в GetCourse (Никита, 09.11.2026).
-# items: (название, количество или '', пояснение или '')
+# Фразы Маши (дословно)
+HOLDER = 'Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца'
+HOLDER_LT30 = 'Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей'
+OPT_NOSUB = 'Для тех, у кого абонемент заканчивается или его нет'
+
+# Суть программ, 1–2 строки (Маша — Антиотёк дословно; остальное — na-pero по лендингам и ТЗ Сони, часть ждёт подтверждения)
+D = dict(
+    ANTI='Комплекс тренировок и алгоритмов заботы о себе, которые помогают снизить задержку жидкости, избавиться от отёков и снизить вес',
+    BELLY='10 дней для тонкой талии: шагательные тренировки, зарядки и пилатес, меню с рецептами и забота о теле',
+    LEGS='Тренировки для ног с заботой о суставах и сосудах, самомассаж, вебинар с флебологом и гайды по уходу за кожей',
+    TABATA='Высокоинтенсивные шагательные тренировки',
+    ZUMBA='Танцевальные тренировки в стиле зумбы',
+    INTERVAL='Шагательные тренировки, где интенсивные шаги чередуются с коротким отдыхом',
+    CAMP='Осенняя смена лагеря клуба: лёгкость, движение и хорошее настроение',
+    SANATORIY='Спа-программа дома на 2 недели: тренировки от 15 минут в день, фейс-фитнес, самомассаж, меню и медитации',
+    FACE='7 тренировок фейс-йоги, 2 занятия по тейпированию лица и лимфодренажная зарядка',
+    WOMEN='Курс на 3 недели: упражнения для пресса, тазового дна и других мышц',
+    POSTURE='Упражнения против сутулости: 3 вводных занятия и 15 основных',
+    MORNING='Зарядки по 5 минут: больше энергии каждый день',
+    HITS='Тренировки до 15 минут под зарубежные и русские хиты',
+    NEW80='Новые тренировки в стиле 80-х, каждая до 15 минут',
+    OLD80='Любимые тренировки клуба в стиле 80-х, каждая до 15 минут',
+)
+
+# items: (название, количество или '', суть программы или '')
 # opts: варианты цены (подпись, пояснение, старая цена или 0, цена) — у паков 1 и 3; виджетов к ним пока нет
 # note: строка про доступ в клуб в строке метаданных
-OPT_MEMBERS = 'Для держателей абонемента, если осталось больше месяца'
-OPT_NOSUB = 'Для тех, у кого абонемент заканчивается или его нет'
 PACKS = [
     dict(id='p1', aud='members', img='p1', pos='50% 42%', sticker='3 программы в одном паке',
          title='Стройное тело', count='65 занятий и практик',
-         items=[('Антиотёк', '23 занятия', ''), ('Стройный живот', '21 занятие', ''), ('Стройные ноги', '21 занятие', '')],
-         opts=[(OPT_MEMBERS, '', 1990, 990), ('Абонемент на месяц + пакет В1', OPT_NOSUB, 0, 1500)]),
+         items=[('Антиотёк', '23 занятия', D['ANTI']), ('Стройный живот', '21 занятие', D['BELLY']), ('Стройные ноги', '21 занятие', D['LEGS'])],
+         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, '', 0, 2490)]),
     dict(id='p2', aud='new', img='p2', pos='50% 22%',
          title='Фитнес', count='21 тренировка', term='1 месяц', note='Без полного доступа к клубу',
-         items=[('Табата', '7 тренировок', ''), ('Зумба', '7 тренировок', ''), ('Интервальные', '7 тренировок', '')],
+         items=[('Табата', '7 тренировок', D['TABATA']), ('Зумба', '7 тренировок', D['ZUMBA']), ('Интервальные', '7 тренировок', D['INTERVAL'])],
          old=3000, price=1500, widget='1680785', sid='e398c503c771b44edda3a589317a0cd11d810c57'),
-    dict(id='p3', aud='members', img='p3', pos='50% 32%',
+    dict(id='p3', aud='members', img='sanatoriy', pos='50% 18%',
          title='Отдых и восстановление', count='2 программы',
-         items=[('Лагерь «Осень 25»', '', 'Лёгкость, движение и хорошее настроение'), ('Санаторий № 1', '', 'Восстановление, здоровье и энергия')],
-         opts=[(OPT_MEMBERS, '', 1990, 990), ('Абонемент на месяц + пакет В3', OPT_NOSUB, 0, 1500)]),
+         items=[('Лагерь «Осень 25»', '', D['CAMP']), ('Санаторий № 1', '', D['SANATORIY'])],
+         opts=[(HOLDER, '', 1990, 990), ('Абонемент на месяц + пакет В3', OPT_NOSUB, 0, 1500)]),
     dict(id='p4', aud='all', img='menu', pos='50% 50%',
          title='Все меню', count='19 недельных меню + подборки', term='1 месяц', note='Без доступа в клуб',
          items=[('19 недельных меню', '', 'завтраки, обеды, ужины, полдники'), ('Меню ПП-пирогов', '', ''), ('2 меню напитков', '', ''),
                 ('Меню десертов', '', ''), ('Меню ПП-куличей', '', '')],
          old=4000, price=2000, widget='1680793', sid='4cc3a15ee284859f267e9b5b068cf31f5c5e535f'),
-    dict(id='p5', aud='all', img='p5', pos='50% 38%',
+    dict(id='p5', aud='all', img='valeria', pos='50% 30%',
          title='Красота, здоровье и лёгкость', count='4 программы', term='3 месяца',
-         items=[('Фейс-йога от Валерии', '10 занятий', 'Упругая кожа и свежий вид'), ('Женское здоровье от Вики', '17 занятий', 'Забота о себе изнутри'),
-                ('Осанка от Вики', '18 занятий', 'Прямая спина и лёгкость в теле'), ('Зарядки 5 минут от Димы', '', 'Больше энергии каждый день')],
+         items=[('Фейс-йога от Валерии', '10 занятий', D['FACE']), ('Женское здоровье от Вики', '17 занятий', D['WOMEN']),
+                ('Осанка от Вики', '18 занятий', D['POSTURE']), ('Зарядки 5 минут от Димы', '', D['MORNING'])],
          old=3990, price=1990, widget='1680796', sid='01cbca3dda7044eb1882b2b467f12b47d554f5a6'),
-    dict(id='p6', aud='new', img='p6', pos='50% 30%',
+    dict(id='p6', aud='new', img='hits', pos='50% 24%',
          title='Все хиты', count='24 тренировки', term='3 месяца', note='Без доступа в клуб',
-         items=[('Все хиты', '', 'Любимые тренировки'), ('80-е новые', '', 'Новые яркие программы'), ('80-е старые', '', 'Классика, которая всегда вдохновляет')],
+         items=[('Все хиты', '', D['HITS']), ('80-е новые', '', D['NEW80']), ('80-е старые', '', D['OLD80'])],
          old=3990, price=1990, widget='1680798', sid='d89e2099d1223c0a436a9a2a6b46943046202e04'),
 ]
 
 T = dict(
     HERO_LEAD='Впервые продаём наборы — для тех, кто хотел, но не успел или пришёл позже. Цены распродажи 10–12 ноября.',
-    MEM_SHORT='Меньше месяца до конца абонемента — предложим продлить по прежним ценам.',
-    STUB_BTN='Купить пока нельзя',
-    STUB_NOTE='Оплату для участников клуба ещё не подключили.',
+    PACKS_LEAD='В каждой карточке видно, что входит в пак, кому он подходит и сколько стоит.',
+    AUD_NEW_EXPL='Подходит, если у вас нет абонемента клуба.',
+    AUD_ALL_EXPL='Подходит всем: с абонементом клуба и без него. Цена одна.',
+    HOW_H='Как купить пак',
+    HOW=['Выбрать пак по составу и цене.',
+         'Нажать «Купить» у подходящей цены и заполнить форму: имя, эл. адрес и телефон.',
+         'Нажать «Перейти к оплате» и оплатить пак.'],
+    FAQ_H='Вопросы и ответы',
+    FAQ=[('Для кого цена 990 ₽?', 'Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца. Такая цена есть у паков «Стройное тело» и «Отдых и восстановление».'),
+         ('Что, если срок абонемента меньше 30 дней или абонемента нет?', 'У пака «Стройное тело» для этого случая своя цена: 2 490 ₽. Кому подходят остальные паки, написано в их карточках.'),
+         ('Что значит «без доступа в клуб»?', 'В пак входят только его программы, а остальные тренировки клуба — нет.'),
+         ('Когда действуют эти цены?', 'С 10 по 12 ноября.')],
 )
 
 ICON = {
@@ -105,8 +136,12 @@ def rub(n):
     return f'{n:,}'.replace(',', NB) + NB + '₽'
 
 
+def aud_badge(key, cls):
+    label, ic = AUD[key]
+    return f'<span class="{cls} {cls}--{key}">{icon(ic)}{t(label)}</span>'
+
+
 def card(p):
-    label, ic = AUD[p['aud']]
     rows = []
     for name, qty, sub in p['items']:
         li = '<li>' + icon('check') + '<span class="pc__name">' + t(name)
@@ -123,9 +158,8 @@ def card(p):
     if p.get('note'):
         meta += '<span>' + icon('ban') + t(p['note']) + '</span>'
     # паки 1 и 3: обычная кнопка покупки без виджета — пока ничего не делает (app.js вешает окно только на [data-widget])
-    stub_btn = '<button class="pc__buy" type="button">' + icon('bag') + 'Купить пак</button>'
+    stub_btn = '<button class="pc__buy" type="button">' + icon('bag') + 'Купить</button>'
     if p.get('opts'):
-        # два варианта цены по странице Маши: подпись, цена, кнопка-заглушка (виджетов пока нет)
         foot = ''
         for label_o, sub_o, old_o, price_o in p['opts']:
             price_html = (f'<s>{rub(old_o)}</s>' if old_o else '') + f'<b>{rub(price_o)}</b>'
@@ -135,16 +169,13 @@ def card(p):
                      f'<p class="pc__price">{price_html}</p>{stub_btn}</div>')
     else:
         pct = round(100 - p['price'] * 100 / p['old'])
-        if p.get('widget'):
-            buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
-                   f'data-title="{html.escape(p["title"])}" data-price="{rub(p["price"])}">' + icon('bag') + 'Купить пак</button>')
-        else:
-            buy = stub_btn
+        buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
+               f'data-title="{html.escape(p["title"])}" data-price="{rub(p["price"])}">' + icon('bag') + 'Купить</button>')
         foot = f'<p class="pc__price"><s>{rub(p["old"])}</s><b>{rub(p["price"])}</b><i>−{pct}%</i></p>{buy}'
     return f'''<article class="pc" data-aud="{p["aud"]}" id="{p["id"]}">
   <div class="pc__media">
     <img class="pc__photo" src="assets/{p["img"]}.webp" alt="" loading="lazy" style="object-position:{p["pos"]}">
-    <span class="pc__aud pc__aud--{p["aud"]}">{icon(ic)}{t(label)}</span>{sticker}
+    {aud_badge(p["aud"], "pc__aud")}{sticker}
   </div>
   <div class="pc__body">
     <h3 class="pc__t">{t(p["title"])}</h3>
@@ -163,6 +194,10 @@ def page():
     chips = ''.join(
         f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
         for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
+    legend = ''.join(f'<li>{aud_badge(k, "aud")}<p>{t(x)}</p></li>'
+                     for k, x in [('members', HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
+    steps = ''.join(f'<li><b>{i}</b><p>{t(s)}</p></li>' for i, s in enumerate(T['HOW'], 1))
+    faq = ''.join(f'<details class="qa"><summary>{t(q)}</summary><p>{t(a)}</p></details>' for q, a in T['FAQ'])
     return f'''<!doctype html>
 <html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}">
 <head>
@@ -174,15 +209,48 @@ def page():
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>.shop{{padding-bottom:24px}}</style>
 </head>
 <body id="top">
+<header class="top"><div class="wrap top__in">
+  <a class="logo" href="#top" aria-label="Шагай Дома">{LOGO}</a>
+  <nav class="top__nav" aria-label="Разделы"><a href="#packs">Паки программ</a><a href="#how">Как купить</a><a href="#faq">Вопросы</a></nav>
+  <a class="top__cta" href="#packs">Выбрать пак</a>
+</div></header>
 <main>
+<section class="wrap hero">
+  <div class="hero__card">
+    <div class="hero__text">
+      <span class="hero__pill">Акция 11.11</span>
+      <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
+      <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
+      <a class="hero__cta" href="#packs">Выбрать пак</a>
+      <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
+    </div>
+    <div class="hero__media" aria-hidden="true">
+      <p class="hero__num">11.11</p>
+      <img class="hero__photo" src="assets/hero-cut.webp" alt="">
+      <p class="hero__sticker">Любимые программы в{NB}выгодных наборах</p>
+    </div>
+  </div>
+</section>
 <section class="wrap shop" id="packs">
+  <h2 class="h2">Паки программ</h2>
+  <p class="shop__lead">{t(T["PACKS_LEAD"])}</p>
+  <ul class="legend">{legend}</ul>
   <div class="chips">{chips}</div>
   <div class="grid">{"".join(card(p) for p in PACKS)}</div>
 </section>
+<section class="wrap how" id="how">
+  <h2 class="h2">{t(T["HOW_H"])}</h2>
+  <ol class="steps">{steps}</ol>
+  <a class="hero__cta how__cta" href="#packs">Выбрать пак</a>
+</section>
+<section class="wrap faq" id="faq">
+  <h2 class="h2">{t(T["FAQ_H"])}</h2>
+  {faq}
+</section>
 </main>
+<div class="wrap">{FOOTER}</div>
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>
