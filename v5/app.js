@@ -1,4 +1,4 @@
-/* Распродажа 11.11 «Шагай Дома», v4: метки, фильтры, окно оплаты с виджетом GetCourse */
+/* Распродажа 11.11 «Шагай Дома», v5: метки, фильтры, окна паков («Подробнее»), окно оплаты с виджетом GetCourse */
 (function () {
   'use strict';
 
@@ -41,14 +41,44 @@
     });
   });
 
+  /* Прокрутка страницы заблокирована, пока открыто хоть одно окно (окно пака или окно оплаты поверх него) */
+  function syncLock() {
+    document.documentElement.classList.toggle('is-locked', !!document.querySelector('dialog[open]'));
+  }
+
+  /* Окна паков: «Подробнее» → полный состав и все варианты покупки. Закрытие: крестик, клик по фону, Escape. */
+  function openDlg(d) {
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+    syncLock();
+  }
+  function closeDlg(d) {
+    if (d.close) d.close(); else { d.removeAttribute('open'); syncLock(); }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('dialog.pk'), function (d) {
+    var inner = d.querySelector('.pk__in');
+    d.querySelector('.pk__x').addEventListener('click', function () { closeDlg(d); });
+    d.addEventListener('click', function (e) { if (e.target === d) closeDlg(d); });
+    d.addEventListener('close', syncLock);
+    d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !d.close) closeDlg(d); });
+    d._reset = function () { if (inner) inner.scrollTop = 0; };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.pc__more[data-pk]'), function (btn) {
+    btn.addEventListener('click', function () {
+      var d = document.getElementById(btn.dataset.pk);
+      if (!d) return;
+      if (d._reset) d._reset();
+      openDlg(d);
+    });
+  });
+
   /* Окно оплаты: виджет пака грузится только по нажатию «Купить пак» и остаётся загруженным */
   var dlg = document.getElementById('paydlg');
   if (!dlg) return;
   var body = dlg.querySelector('.paydlg__body');
   function close() {
-    if (dlg.close) dlg.close(); else dlg.removeAttribute('open');
+    if (dlg.close) dlg.close(); else { dlg.removeAttribute('open'); syncLock(); }
   }
-  dlg.addEventListener('close', function () { document.documentElement.classList.remove('is-locked'); });
+  dlg.addEventListener('close', syncLock);
   dlg.querySelector('.paydlg__x').addEventListener('click', close);
   dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
 
@@ -75,8 +105,8 @@
         slot.appendChild(s);
       }
       Array.prototype.forEach.call(body.querySelectorAll('.paydlg__slot'), function (x) { x.hidden = x !== slot; });
-      document.documentElement.classList.add('is-locked');
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      syncLock();
     });
   });
 })();
