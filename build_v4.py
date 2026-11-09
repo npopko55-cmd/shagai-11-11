@@ -65,7 +65,6 @@ PACKS = [
 
 T = dict(
     HERO_LEAD='Впервые продаём наборы — для тех, кто хотел, но не успел или пришёл позже. Цены распродажи 10–12 ноября.',
-    NOINT_T='Пак вы проходите сами. В каналах с заданиями открыты комментарии: там можно обсуждать задания с другими участниками. Кураторы обратную связь не дают, конкурсов нет.',
     MEM_SHORT='Меньше месяца до конца абонемента — предложим продлить по прежним ценам.',
     STUB_BTN='Купить пока нельзя',
     STUB_NOTE='Оплату для участников клуба ещё не подключили.',
@@ -123,7 +122,8 @@ def card(p):
         meta += '<span>' + icon('clock') + t(p['term']) + '</span>'
     if p.get('note'):
         meta += '<span>' + icon('ban') + t(p['note']) + '</span>'
-    stub_btn = '<button class="pc__buy pc__buy--off" type="button" disabled>' + t(T['STUB_BTN']) + '</button>'
+    # паки 1 и 3: обычная кнопка покупки без виджета — пока ничего не делает (app.js вешает окно только на [data-widget])
+    stub_btn = '<button class="pc__buy" type="button">' + icon('bag') + 'Купить пак</button>'
     if p.get('opts'):
         # два варианта цены по странице Маши: подпись, цена, кнопка-заглушка (виджетов пока нет)
         foot = ''
@@ -181,7 +181,6 @@ def page():
 <section class="wrap shop" id="packs">
   <div class="chips">{chips}</div>
   <div class="grid">{"".join(card(p) for p in PACKS)}</div>
-  <p class="noint">{icon("bolt")}<span><b>Пак без интерактива.</b> {t(T["NOINT_T"])}</span></p>
 </section>
 </main>
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
