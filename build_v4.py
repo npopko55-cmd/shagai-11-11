@@ -155,31 +155,16 @@ def page():
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>.shop{{padding-bottom:24px}}</style>
 </head>
 <body id="top">
-<header class="top"><div class="wrap top__in">
-  <a class="logo" href="#top" aria-label="Шагай Дома">{LOGO}</a>
-  <span class="top__date">{icon("bolt")}10–12 ноября</span>
-</div></header>
 <main>
-<section class="wrap hero">
-  <div class="hero__card">
-    <div class="hero__text">
-      <span class="hero__pill">Акция 11.11</span>
-      <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
-      <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
-      <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
-    </div>
-    <p class="hero__num" aria-hidden="true">11.11</p>
-  </div>
-</section>
 <section class="wrap shop" id="packs">
   <div class="chips">{chips}</div>
   <div class="grid">{"".join(card(p) for p in PACKS)}</div>
   <p class="noint">{icon("bolt")}<span><b>Пак без интерактива.</b> {t(T["NOINT_T"])}</span></p>
 </section>
 </main>
-<div class="wrap">{FOOTER}</div>
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>
