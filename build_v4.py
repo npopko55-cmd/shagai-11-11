@@ -60,7 +60,7 @@ PACKS = [
     dict(id='p1', aud='members', img='p1', pos='50% 42%', sticker='3 программы в одном паке',
          title='Стройное тело', count='65 занятий и практик',
          items=[('Антиотёк', '23 занятия', D['ANTI']), ('Стройный живот', '21 занятие', D['BELLY']), ('Стройные ноги', '21 занятие', D['LEGS'])],
-         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Стройное тело» с полным доступом в клуб на 1 месяц', 0, 2490)]),
+         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Стройное тело» с полным доступом в клуб на 1 месяц', 0, 2490, '1680932', '17f61cde9d792126916573ffe82abb855e214f52')]),
     dict(id='p2', aud='new', img='fitness', pos='50% 28%',
          title='Фитнес', lead='Попробуй наши самые знаменитые и трендовые тренировки',
          count='21 тренировка', term='1 месяц', note='Без полного доступа к клубу',
@@ -71,7 +71,7 @@ PACKS = [
          title='Отдых и восстановление', count='2 программы',
          about='Просто худеть или оздоравливаться — скучно. У нас есть два легендарных формата, где вас ждут тренировки, задания для себя, вебинары и многое другое. Сотни людей прошли программы и в игровой форме получили великолепный результат, ведь важно делать любое дело с интересом.',
          items=[('Лагерь «Осень 25»', '', D['CAMP']), ('Санаторий № 1', '', D['SANATORIY'])],
-         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц', 0, 2490)]),
+         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц', 0, 2490, '1680937', '178b8809a7845d433cee343c7c1c263f89534f3e')]),
     dict(id='p4', aud='all', img='menu', pos='50% 50%',
          title='Все меню', lead='Все наши легендарные меню-конструкторы',
          about='Сотни людей используют их для снижения веса и показывают великолепные результаты. Вам не придётся искать продукты, которых нет в магазине. Все КБЖУ расписаны. Даётся инструкция.',
@@ -168,13 +168,20 @@ def card(p):
     stub_btn = '<button class="pc__buy" type="button">' + icon('bag') + 'Купить</button>'
     if p.get('opts'):
         foot = ''
-        # opts: (подпись «для кого», название предложения или '', старая цена или 0, цена)
-        for cap_o, title_o, old_o, price_o in p['opts']:
+        # opts: (подпись «для кого», название предложения или '', старая цена или 0, цена[, id виджета, id скрипта])
+        for opt in p['opts']:
+            cap_o, title_o, old_o, price_o = opt[:4]
             price_html = (f'<s>{rub(old_o)}</s>' if old_o else '') + f'<b>{rub(price_o)}</b>'
             if old_o:
                 price_html += f'<i>−{round(100 - price_o * 100 / old_o)}%</i>'
             head_o = (f'<p class="pc__optt">{t(title_o)}</p>' if title_o else '') + f'<p class="pc__optl">{t(cap_o)}</p>'
-            foot += f'<div class="pc__opt">{head_o}<p class="pc__price">{price_html}</p>{stub_btn}</div>'
+            if len(opt) > 4:
+                # вариант с виджетом GetCourse (2 490 ₽ — программа с полным доступом в клуб на 1 месяц)
+                btn_o = (f'<button class="pc__buy" type="button" data-widget="{opt[4]}" data-sid="{opt[5]}" '
+                         f'data-title="{html.escape(title_o or p["title"])}" data-price="{rub(price_o)}">' + icon('bag') + 'Купить</button>')
+            else:
+                btn_o = stub_btn  # 990 ₽ держателям: виджета пока нет, кнопка без действия
+            foot += f'<div class="pc__opt">{head_o}<p class="pc__price">{price_html}</p>{btn_o}</div>'
     else:
         pct = round(100 - p['price'] * 100 / p['old'])
         buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
