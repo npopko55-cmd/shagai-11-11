@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""Распродажа 11.11 «Шагай Дома», страница /v4/ (пятая итерация): шапка, первый экран, паки, как купить, вопросы, подвал.
+
+Визуал — по референсу Димы (~/Downloads/shagai-v4-ref/dima_reference_desktop.jpg): светлый фон, фиолетово-розовая гамма.
+Паки — по официальной странице Маши в GetCourse и её правкам 09.11.2026 (фразы для держателей, цены пака 1, описания программ).
+Новые тексты — через na-pero 09.11.2026; фразы Маши — дословно. Фото — настоящие кадры клуба (студия, красная форма),
+фон фото Валерии убран в Higgsfield (сессия Trandwatching), кроме тарелки меню (сгенерирована там же ранее).
+Оплата: виджеты GetCourse паков 2, 4, 5, 6 открываются в окне (app.js); у паков 1 и 3 кнопки пока без действия.
+Корень (v3) и v2/ не трогает. Запуск: python3 build_v4.py
+"""
+import html
+import pathlib
+import re
+
+ROOT = pathlib.Path(__file__).parent
+OUT = ROOT / 'v4'
+# Метка акции для аналитики (utm_campaign=l_ГГГГММ_имя). Выдаёт Никита; пока пусто — ничего не подставляется.
+SALE_CAMPAIGN = ''
+
+NB = ' '
+LOGO = (ROOT / 'parts/logo.svg').read_text().replace('<svg ', '<svg class="logo__svg" ', 1)
+FOOTER = (ROOT / 'parts/footer.html').read_text().replace(
+    '<h2 class="footer__brand">Шагай Дома</h2>',
+    '<a class="footer__brand" href="#top" aria-label="Шагай Дома">' + LOGO + '</a>')
+
+AUD = {
+    'members': ('Для держателей абонемента', 'lock'),
+    'new': ('Для новых пользователей', 'user'),
+    'all': ('Для держателей абонемента и новых пользователей', 'users'),
+}
+
+# Фразы Маши (дословно)
+HOLDER = 'Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца'
+HOLDER_LT30 = 'Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей'
+OPT_NOSUB = 'Для тех, у кого абонемент заканчивается или его нет'
+
+# Суть программ, 1–2 строки (Маша — Антиотёк дословно; остальное — na-pero по лендингам и ТЗ Сони, часть ждёт подтверждения)
+D = dict(
+    ANTI='Комплекс тренировок и алгоритмов заботы о себе, которые помогают снизить задержку жидкости, избавиться от отёков и снизить вес',
+    BELLY='10 дней для тонкой талии: шагательные тренировки, зарядки и пилатес, меню с рецептами и забота о теле',
+    LEGS='Тренировки для ног с заботой о суставах и сосудах, самомассаж, вебинар с флебологом и гайды по уходу за кожей',
+    TABATA='Короткие интенсивные интервалы — быстрый способ дать телу хорошую нагрузку.',
+    ZUMBA='Почти танец: энергичная и весёлая тренировка.',
+    INTERVAL='Считаются самыми сложными из трёх. Для тех, кто хочет нагрузку посерьёзнее.',
+    CAMP='Осенняя смена лагеря клуба: лёгкость, движение и хорошее настроение',
+    SANATORIY='Спа-программа дома на 2 недели: тренировки от 15 минут в день, фейс-фитнес, самомассаж, меню и медитации',
+    FACE='Занятия, чтобы сохранить молодость, избавиться от отёков и добавить тейпы в уход за лицом.',
+    WOMEN='Упражнения помогают справиться с проблемами мышц тазового дна и живота и улучшить женское здоровье.',
+    POSTURE='Упражнения против сутулости: осанка — это здоровье.',
+    MORNING='Утренние зарядки от 5 минут для здоровья. Начните день с пользой.',
+    HITS='Один любимый хит — одна тренировка. Успеете, даже если у вас всего 3 минуты.',
+    NEW80='Яркая программа, которая радует глаз и погружает в атмосферу 80-х.',
+    OLD80='Классный формат, который помогает вспомнить аэробику 80-х.',
+)
+
+# items: (название, количество или '', суть программы или '')
+# opts: варианты цены (подпись, пояснение, старая цена или 0, цена) — у паков 1 и 3; виджетов к ним пока нет
+# note: строка про доступ в клуб в строке метаданных
+PACKS = [
+    dict(id='p1', aud='members', img='p1', pos='50% 42%', sticker='3 программы в одном паке',
+         title='Стройное тело', count='65 занятий и практик',
+         items=[('Антиотёк', '23 занятия', D['ANTI']), ('Стройный живот', '21 занятие', D['BELLY']), ('Стройные ноги', '21 занятие', D['LEGS'])],
+         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Стройное тело» с полным доступом в клуб на 1 месяц', 0, 2490, '1680932', '17f61cde9d792126916573ffe82abb855e214f52')]),
+    dict(id='p2', aud='new', img='fitness', pos='50% 28%',
+         title='Фитнес', lead='Попробуй наши самые знаменитые и трендовые тренировки',
+         count='21 тренировка', term='1 месяц', note='Без полного доступа к клубу',
+         extra=('Клуб «ШАГАЙ ДОМА⚡️» на 1 месяц', 'Всего на 100 ₽ дороже пака, зато полный доступ к клубу.', 1600),
+         items=[('Табата', '7 тренировок', D['TABATA']), ('Зумба', '7 тренировок', D['ZUMBA']), ('Интервальные', '7 тренировок', D['INTERVAL'])],
+         old=3000, price=1500, widget='1680785', sid='e398c503c771b44edda3a589317a0cd11d810c57'),
+    dict(id='p3', aud='members', img='sanatoriy', pos='50% 0%',
+         title='Отдых и восстановление', count='2 программы',
+         about='Просто худеть или оздоравливаться — скучно. У нас есть два легендарных формата, где вас ждут тренировки, задания для себя, вебинары и многое другое. Сотни людей прошли программы и в игровой форме получили великолепный результат, ведь важно делать любое дело с интересом.',
+         items=[('Лагерь «Осень 25»', '', D['CAMP']), ('Санаторий № 1', '', D['SANATORIY'])],
+         opts=[(HOLDER, '', 1990, 990), (HOLDER_LT30, 'Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц', 0, 2490, '1680937', '178b8809a7845d433cee343c7c1c263f89534f3e')]),
+    dict(id='p4', aud='all', img='menu', pos='50% 50%',
+         title='Все меню', lead='Все наши легендарные меню-конструкторы',
+         about='Сотни людей используют их для снижения веса и показывают великолепные результаты. Вам не придётся искать продукты, которых нет в магазине. Все КБЖУ расписаны. Даётся инструкция.',
+         count='19 недельных меню + подборки', term='1 месяц', note='Без доступа в клуб',
+         items=[('19 недельных меню', '', 'завтраки, обеды, ужины, полдники'), ('Меню ПП-пирогов', '', ''), ('2 меню напитков', '', ''),
+                ('Меню десертов', '', ''), ('Меню ПП-куличей', '', '')],
+         old=4000, price=2000, widget='1680793', sid='4cc3a15ee284859f267e9b5b068cf31f5c5e535f'),
+    dict(id='p5', aud='all', img='valeria-studio', pos='50% 50%',
+         title='Красота, здоровье и лёгкость', count='4 программы', term='3 месяца',
+         items=[('Фейс-йога от Валерии', '10 занятий', D['FACE']), ('Женское здоровье от Вики', '17 занятий', D['WOMEN']),
+                ('Осанка от Вики', '18 занятий', D['POSTURE']), ('Зарядки 5 минут от Димы', '', D['MORNING'])],
+         old=3990, price=1990, widget='1680796', sid='01cbca3dda7044eb1882b2b467f12b47d554f5a6'),
+    dict(id='p6', aud='new', img='hits2', pos='50% 20%',
+         title='Все хиты', count='24 тренировки', term='3 месяца', note='Без доступа в клуб',
+         items=[('Все хиты', '', D['HITS']), ('80-е новые', '', D['NEW80']), ('80-е старые', '', D['OLD80'])],
+         old=3990, price=1990, widget='1680798', sid='d89e2099d1223c0a436a9a2a6b46943046202e04'),
+]
+
+T = dict(
+    HERO_LEAD='Впервые продаём наборы — для тех, кто хотел, но не успел или пришёл позже. Цены распродажи 10–12 ноября.',
+    PACKS_LEAD='В каждой карточке видно, что входит в пак, кому он подходит и сколько стоит.',
+    AUD_NEW_EXPL='Подходит, если у вас нет абонемента клуба.',
+    AUD_ALL_EXPL='Подходит всем: с абонементом клуба и без него. Цена одна.',
+    HOW_H='Как купить пак',
+    HOW=['Выбрать пак по составу и цене.',
+         'Нажать «Купить» у подходящей цены и заполнить форму: имя, эл. адрес и телефон.',
+         'Нажать «Перейти к оплате» и оплатить пак.'],
+    FAQ_H='Вопросы и ответы',
+    FAQ=[('Для кого цена 990 ₽?', 'Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца. Такая цена есть у паков «Стройное тело» и «Отдых и восстановление».'),
+         ('Что, если срок абонемента меньше 30 дней или абонемента нет?', 'У паков «Стройное тело» и «Отдых и восстановление» для этого случая есть вариант за 2 490 ₽: программа с полным доступом в клуб на 1 месяц. Кому подходят остальные паки, написано в их карточках.'),
+         ('Что значит «без доступа в клуб»?', 'В пак входят только его программы, а остальные тренировки клуба — нет.'),
+         ('Когда действуют эти цены?', 'С 10 по 12 ноября.')],
+)
+
+ICON = {
+    'lock': '<path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z"/>',
+    'user': '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+    'users': '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.8 3 2.6 3.6 5.2"/>',
+    'check': '<path d="M4 12.5l5 5L20 6.5"/>',
+    'clock': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    'stack': '<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/>',
+    'gift': '<path d="M3 9h18v12H3zM12 9v12M3 13h18M8 9c-2 0-3-1.2-3-2.5S6.2 4 8 5.5 12 9 12 9s1.8-2 4-3.5S19 4.9 19 6.5 18 9 16 9"/>',
+    'loop': '<path d="M6.5 15.5c-2 0-3.5-1.6-3.5-3.5s1.5-3.5 3.5-3.5c3.5 0 7.5 7 11 7 2 0 3.5-1.6 3.5-3.5S19.5 8.5 17.5 8.5c-3.5 0-7.5 7-11 7z"/>',
+    'bolt': '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    'bag': '<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
+    'x': '<path d="M6 6l12 12M18 6L6 18"/>',
+    'ban': '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+    'card': '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    'form': '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>',
+}
+
+
+def icon(name, cls='ic'):
+    return '<svg class="' + cls + '" viewBox="0 0 24 24" aria-hidden="true">' + ICON[name] + '</svg>'
+
+
+SHORT = re.compile(r'(^|[\s(«„])((?:[А-Яа-яЁё]{1,2})|для|без|под|при|про|что|как|или|это|его|все)\s', re.I)
+
+
+def t(s):
+    s = html.escape(s, quote=False)
+    for _ in range(2):
+        s = SHORT.sub(lambda m: m.group(1) + m.group(2) + NB, s)
+    s = s.replace(' —', NB + '—').replace(' ₽', NB + '₽').replace(' + ', NB + '+ ')
+    return re.sub(r'(\d) (\d{3})', r'\1' + NB + r'\2', s)
+
+
+def rub(n):
+    return f'{n:,}'.replace(',', NB) + NB + '₽'
+
+
+def aud_badge(key, cls):
+    label, ic = AUD[key]
+    return f'<span class="{cls} {cls}--{key}">{icon(ic)}{t(label)}</span>'
+
+
+def card(p):
+    rows = []
+    for name, qty, sub in p['items']:
+        li = '<li>' + icon('check') + '<span class="pc__name">' + t(name)
+        if sub:
+            li += '<small>' + t(sub) + '</small>'
+        li += '</span>'
+        if qty:
+            li += '<b class="pc__qty">' + t(qty) + '</b>'
+        rows.append(li + '</li>')
+    sticker = '<span class="pc__sticker">' + t(p['sticker']) + '</span>' if p.get('sticker') else ''
+    meta = '<span>' + icon('stack') + t(p['count']) + '</span>'
+    if p.get('term'):
+        meta += '<span>' + icon('clock') + t(p['term']) + '</span>'
+    if p.get('note'):
+        meta += '<span>' + icon('ban') + t(p['note']) + '</span>'
+    lead = f'<p class="pc__lead">{t(p["lead"])}</p>' if p.get('lead') else ''
+    about = f'<p class="pc__about">{t(p["about"])}</p>' if p.get('about') else ''
+    # паки 1 и 3: обычная кнопка покупки без виджета — пока ничего не делает (app.js вешает окно только на [data-widget])
+    stub_btn = '<button class="pc__buy" type="button">' + icon('bag') + 'Купить</button>'
+    if p.get('opts'):
+        foot = ''
+        # opts: (подпись «для кого», название предложения или '', старая цена или 0, цена[, id виджета, id скрипта])
+        for opt in p['opts']:
+            cap_o, title_o, old_o, price_o = opt[:4]
+            price_html = (f'<s>{rub(old_o)}</s>' if old_o else '') + f'<b>{rub(price_o)}</b>'
+            if old_o:
+                price_html += f'<i>−{round(100 - price_o * 100 / old_o)}%</i>'
+            head_o = (f'<p class="pc__optt">{t(title_o)}</p>' if title_o else '') + f'<p class="pc__optl">{t(cap_o)}</p>'
+            if len(opt) > 4:
+                # вариант с виджетом GetCourse (2 490 ₽ — программа с полным доступом в клуб на 1 месяц)
+                btn_o = (f'<button class="pc__buy" type="button" data-widget="{opt[4]}" data-sid="{opt[5]}" '
+                         f'data-title="{html.escape(title_o or p["title"])}" data-price="{rub(price_o)}">' + icon('bag') + 'Купить</button>')
+            else:
+                btn_o = stub_btn  # 990 ₽ держателям: виджета пока нет, кнопка без действия
+            foot += f'<div class="pc__opt">{head_o}<p class="pc__price">{price_html}</p>{btn_o}</div>'
+    else:
+        pct = round(100 - p['price'] * 100 / p['old'])
+        buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
+               f'data-title="{html.escape(p["title"])}" data-price="{rub(p["price"])}">' + icon('bag') + 'Купить</button>')
+        foot = f'<p class="pc__price"><s>{rub(p["old"])}</s><b>{rub(p["price"])}</b><i>−{pct}%</i></p>{buy}'
+        if p.get('extra'):
+            # второе предложение (у «Фитнеса» — клуб на месяц); кнопка пока без действия
+            et, es, ep = p['extra']
+            foot += (f'<div class="pc__opt pc__opt--club"><p class="pc__optt">{t(et)}</p><p class="pc__optl">{t(es)}</p>'
+                     f'<p class="pc__price"><b>{rub(ep)}</b></p>{stub_btn}</div>')
+    return f'''<article class="pc" data-aud="{p["aud"]}" id="{p["id"]}">
+  <div class="pc__media">
+    <img class="pc__photo" src="assets/{p["img"]}.webp" alt="" loading="lazy" style="object-position:{p["pos"]}">
+    {aud_badge(p["aud"], "pc__aud")}{sticker}
+  </div>
+  <div class="pc__body">
+    <h3 class="pc__t">{t(p["title"])}</h3>{lead}{about}
+    <p class="pc__meta">{meta}</p>
+    <ul class="pc__list">{"".join(rows)}</ul>
+    <div class="pc__foot">
+      {foot}
+    </div>
+  </div>
+</article>'''
+
+
+def page():
+    def count(a):
+        return sum(1 for p in PACKS if a == 'any' or p['aud'] == a)
+    chips = ''.join(
+        f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
+        for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
+    legend = ''.join(f'<li class="rv"><span class="legend__ic legend__ic--{k}">{icon(AUD[k][1])}</span><div>{aud_badge(k, "aud")}<p>{t(x)}</p></div></li>'
+                     for k, x in [('members', HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
+    steps = ''.join(f'<li class="rv"><b class="steps__n">{i}</b><span class="steps__ic">{icon(ic)}</span><p>{t(s)}</p></li>' for i, (s, ic) in enumerate(zip(T['HOW'], ['stack', 'form', 'card']), 1))
+    promo = ''.join(f'<span>{icon("bolt")}{x}</span>' for x in ['Акция 11.11', '−50%', '10–12 ноября', 'Большая распродажа любимых программ'] * 4)
+    faq = ''.join(f'<details class="qa"><summary>{t(q)}</summary><p>{t(a)}</p></details>' for q, a in T['FAQ'])
+    return f'''<!doctype html>
+<html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Распродажа 11.11 — паки программ «Шагай Дома»</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f7f4fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body id="top">
+<div class="promo" aria-hidden="true"><div class="promo__track">{promo}{promo}</div></div>
+<header class="top"><div class="wrap top__in">
+  <a class="logo" href="#top" aria-label="Шагай Дома">{LOGO}</a>
+  <nav class="top__nav" aria-label="Разделы"><a href="#packs">Паки программ</a><a href="#how">Как купить</a><a href="#faq">Вопросы</a></nav>
+  <a class="top__cta" href="#packs">Выбрать пак</a>
+</div></header>
+<main>
+<section class="wrap hero">
+  <div class="hero__card">
+    <div class="hero__text">
+      <span class="hero__pill">Акция 11.11</span>
+      <p class="hero__big" aria-hidden="true">11.11</p>
+      <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
+      <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
+      <a class="hero__cta" href="#packs">Выбрать пак</a>
+      <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
+    </div>
+    <div class="hero__media" aria-hidden="true">
+      <p class="hero__off">−50%</p>
+      <img class="hero__photo" src="assets/hero-cut.webp" alt="">
+      <p class="hero__sticker">Любимые программы в{NB}выгодных наборах</p>
+    </div>
+  </div>
+</section>
+<section class="wrap shop" id="packs">
+  <h2 class="h2">Паки программ</h2>
+  <p class="shop__lead">{t(T["PACKS_LEAD"])}</p>
+  <ul class="legend">{legend}</ul>
+  <div class="chips">{chips}</div>
+  <div class="grid">{"".join(card(p) for p in PACKS)}</div>
+</section>
+<section class="how" id="how"><div class="wrap">
+  <h2 class="h2">{t(T["HOW_H"])}</h2>
+  <ol class="steps">{steps}</ol>
+  <a class="hero__cta how__cta" href="#packs">Выбрать пак</a>
+</div></section>
+<section class="wrap faq" id="faq">
+  <h2 class="h2">{t(T["FAQ_H"])}</h2>
+  {faq}
+</section>
+</main>
+<div class="wrap">{FOOTER}</div>
+<dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
+  <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
+  <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>
+  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span></div>
+</dialog>
+<script src="app.js"></script>
+</body>
+</html>
+'''
+
+
+if __name__ == '__main__':
+    OUT.mkdir(exist_ok=True)
+    (OUT / 'index.html').write_text(page())
+    print('собрано: v4/index.html')
