@@ -31,7 +31,7 @@
 
   /* Фильтры */
   var chips = document.querySelectorAll('.chip');
-  var cards = document.querySelectorAll('.pc');
+  var cards = document.querySelectorAll('.grid--packs .pc'); /* фильтры — только наборы, абонементы в своём блоке */
   Array.prototype.forEach.call(chips, function (chip) {
     chip.addEventListener('click', function () {
       Array.prototype.forEach.call(chips, function (x) { x.classList.toggle('is-on', x === chip); });

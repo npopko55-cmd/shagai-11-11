@@ -144,7 +144,7 @@ button { font: inherit; color: inherit; }
 .pk::backdrop { background: rgba(29, 20, 56, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .pk__in { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .pk__x { position: absolute; top: 12px; right: 12px; z-index: 3; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .96); color: var(--ink); cursor: pointer; box-shadow: 0 6px 18px rgba(30, 10, 60, .18); }
-.pk__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #efe9f7; }
+.pk__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #efe9f7; }
 .pk__body { padding: 20px 18px 28px; }
 .pk__body .pc__t { font-size: 28px; }
 .pk__opts { display: grid; gap: 12px; margin-top: 22px; }
@@ -159,6 +159,12 @@ button { font: inherit; color: inherit; }
 .pk__opt .pc__buy { margin-top: 12px; }
 .pk__opt .pc__buy--ghost { width: 100%; min-height: 52px; font-size: 16px; }
 .btn:focus-visible, .chip:focus-visible, .pc__buy:focus-visible, .paydlg__x:focus-visible, .pc__more:focus-visible, .pk__x:focus-visible { outline: 3px solid #c8a8ff; outline-offset: 2px; }
+
+/* абонементы клуба: те же карточки, отдельный блок */
+.clubs { padding: 40px 0 0; }
+.clubs .shop__lead { margin-top: 10px; }
+.grid--clubs { margin-top: 20px; }
+.pc__price b small { margin-right: 1px; font-size: .55em; font-weight: 700; }
 
 /* как купить и вопросы */
 .how, .faq { padding: 40px 0 0; }
@@ -217,12 +223,13 @@ button { font: inherit; color: inherit; }
   .legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .chips { margin: 22px 0 0; padding: 0; flex-wrap: wrap; overflow: visible; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .clubs { padding-top: 52px; }
   .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .footer__grid { grid-template-columns: 1.4fr 1fr; gap: 32px; }
   .footer__links { grid-template-columns: 1fr 1fr; gap: 7px 22px; }
   .paydlg { width: min(560px, calc(100% - 32px)); margin: auto; border-radius: 24px; }
   .pk { width: min(760px, calc(100% - 48px)); height: auto; max-height: calc(100dvh - 64px); margin: auto; border-radius: 28px; box-shadow: 0 30px 80px rgba(29, 20, 56, .35); }
-  .pk__media { aspect-ratio: 16 / 8; }
+  .pk__media { aspect-ratio: 16 / 10; }
   .pk__body { padding: 26px 32px 32px; }
   .pk__body .pc__t { font-size: 32px; }
   .pk__opts { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
@@ -256,6 +263,11 @@ button { font: inherit; color: inherit; }
   .h2--s { font-size: 44px; }
   .shop__lead { font-size: 17px; }
   .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 28px; }
+  .grid--clubs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pc--club { flex-direction: row; }
+  .pc--club .pc__media { flex: 0 0 46%; aspect-ratio: auto; min-height: 330px; }
+  .pc--club .pc__body { padding: 22px 16px 10px 24px; }
+  .clubs { padding-top: 64px; }
   .pc__t { font-size: 28px; }
   .pc__price b { font-size: 36px; }
   .how, .faq { padding-top: 64px; }
