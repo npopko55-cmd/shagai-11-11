@@ -80,3 +80,15 @@
     });
   });
 })();
+
+/* Появление блоков при прокрутке (v9). Без JS и при reduce-motion всё видно сразу. */
+(function () {
+  var els = document.querySelectorAll('.rv, .pc, .qa, .shop .h2, .faq .h2, .how .h2');
+  if (!('IntersectionObserver' in window) || !els.length) return;
+  document.documentElement.classList.add('js');
+  Array.prototype.forEach.call(els, function (el) { el.classList.add('rv'); });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+})();

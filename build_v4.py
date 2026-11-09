@@ -67,7 +67,7 @@ PACKS = [
          extra=('Клуб «ШАГАЙ ДОМА⚡️» на 1 месяц', 'Всего на 100 ₽ дороже пака, зато полный доступ к клубу.', 1600),
          items=[('Табата', '7 тренировок', D['TABATA']), ('Зумба', '7 тренировок', D['ZUMBA']), ('Интервальные', '7 тренировок', D['INTERVAL'])],
          old=3000, price=1500, widget='1680785', sid='e398c503c771b44edda3a589317a0cd11d810c57'),
-    dict(id='p3', aud='members', img='sanatoriy', pos='50% 18%',
+    dict(id='p3', aud='members', img='sanatoriy', pos='50% 0%',
          title='Отдых и восстановление', count='2 программы',
          about='Просто худеть или оздоравливаться — скучно. У нас есть два легендарных формата, где вас ждут тренировки, задания для себя, вебинары и многое другое. Сотни людей прошли программы и в игровой форме получили великолепный результат, ведь важно делать любое дело с интересом.',
          items=[('Лагерь «Осень 25»', '', D['CAMP']), ('Санаторий № 1', '', D['SANATORIY'])],
@@ -79,12 +79,12 @@ PACKS = [
          items=[('19 недельных меню', '', 'завтраки, обеды, ужины, полдники'), ('Меню ПП-пирогов', '', ''), ('2 меню напитков', '', ''),
                 ('Меню десертов', '', ''), ('Меню ПП-куличей', '', '')],
          old=4000, price=2000, widget='1680793', sid='4cc3a15ee284859f267e9b5b068cf31f5c5e535f'),
-    dict(id='p5', aud='all', img='valeria', pos='50% 30%',
+    dict(id='p5', aud='all', img='valeria-studio', pos='50% 50%',
          title='Красота, здоровье и лёгкость', count='4 программы', term='3 месяца',
          items=[('Фейс-йога от Валерии', '10 занятий', D['FACE']), ('Женское здоровье от Вики', '17 занятий', D['WOMEN']),
                 ('Осанка от Вики', '18 занятий', D['POSTURE']), ('Зарядки 5 минут от Димы', '', D['MORNING'])],
          old=3990, price=1990, widget='1680796', sid='01cbca3dda7044eb1882b2b467f12b47d554f5a6'),
-    dict(id='p6', aud='new', img='hits', pos='50% 24%',
+    dict(id='p6', aud='new', img='hits2', pos='50% 20%',
          title='Все хиты', count='24 тренировки', term='3 месяца', note='Без доступа в клуб',
          items=[('Все хиты', '', D['HITS']), ('80-е новые', '', D['NEW80']), ('80-е старые', '', D['OLD80'])],
          old=3990, price=1990, widget='1680798', sid='d89e2099d1223c0a436a9a2a6b46943046202e04'),
@@ -119,6 +119,8 @@ ICON = {
     'bag': '<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
     'x': '<path d="M6 6l12 12M18 6L6 18"/>',
     'ban': '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+    'card': '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    'form': '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>',
 }
 
 
@@ -214,9 +216,10 @@ def page():
     chips = ''.join(
         f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
         for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
-    legend = ''.join(f'<li>{aud_badge(k, "aud")}<p>{t(x)}</p></li>'
+    legend = ''.join(f'<li class="rv"><span class="legend__ic legend__ic--{k}">{icon(AUD[k][1])}</span><div>{aud_badge(k, "aud")}<p>{t(x)}</p></div></li>'
                      for k, x in [('members', HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
-    steps = ''.join(f'<li><b>{i}</b><p>{t(s)}</p></li>' for i, s in enumerate(T['HOW'], 1))
+    steps = ''.join(f'<li class="rv"><b class="steps__n">{i}</b><span class="steps__ic">{icon(ic)}</span><p>{t(s)}</p></li>' for i, (s, ic) in enumerate(zip(T['HOW'], ['stack', 'form', 'card']), 1))
+    promo = ''.join(f'<span>{icon("bolt")}{x}</span>' for x in ['Акция 11.11', '−50%', '10–12 ноября', 'Большая распродажа любимых программ'] * 4)
     faq = ''.join(f'<details class="qa"><summary>{t(q)}</summary><p>{t(a)}</p></details>' for q, a in T['FAQ'])
     return f'''<!doctype html>
 <html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}">
@@ -231,6 +234,7 @@ def page():
 <link rel="stylesheet" href="styles.css">
 </head>
 <body id="top">
+<div class="promo" aria-hidden="true"><div class="promo__track">{promo}{promo}</div></div>
 <header class="top"><div class="wrap top__in">
   <a class="logo" href="#top" aria-label="Шагай Дома">{LOGO}</a>
   <nav class="top__nav" aria-label="Разделы"><a href="#packs">Паки программ</a><a href="#how">Как купить</a><a href="#faq">Вопросы</a></nav>
@@ -241,13 +245,14 @@ def page():
   <div class="hero__card">
     <div class="hero__text">
       <span class="hero__pill">Акция 11.11</span>
+      <p class="hero__big" aria-hidden="true">11.11</p>
       <h1 class="hero__h">Большая распродажа <em>любимых программ</em></h1>
       <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
       <a class="hero__cta" href="#packs">Выбрать пак</a>
       <ul class="hero__perks"><li>{icon("gift")}Специальные цены</li><li>{icon("loop")}Выбирай свой пакет</li><li>{icon("bolt")}Действуй 10–12 ноября</li></ul>
     </div>
     <div class="hero__media" aria-hidden="true">
-      <p class="hero__num">11.11</p>
+      <p class="hero__off">−50%</p>
       <img class="hero__photo" src="assets/hero-cut.webp" alt="">
       <p class="hero__sticker">Любимые программы в{NB}выгодных наборах</p>
     </div>
@@ -260,11 +265,11 @@ def page():
   <div class="chips">{chips}</div>
   <div class="grid">{"".join(card(p) for p in PACKS)}</div>
 </section>
-<section class="wrap how" id="how">
+<section class="how" id="how"><div class="wrap">
   <h2 class="h2">{t(T["HOW_H"])}</h2>
   <ol class="steps">{steps}</ol>
   <a class="hero__cta how__cta" href="#packs">Выбрать пак</a>
-</section>
+</div></section>
 <section class="wrap faq" id="faq">
   <h2 class="h2">{t(T["FAQ_H"])}</h2>
   {faq}
