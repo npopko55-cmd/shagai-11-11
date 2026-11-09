@@ -23,38 +23,43 @@ FOOTER = (ROOT / 'parts/footer.html').read_text().replace(
     '<a class="footer__brand" href="#top" aria-label="Шагай Дома">' + LOGO + '</a>')
 
 AUD = {
-    'members': ('Только для участников клуба', 'lock'),
-    'new': ('Для новых участников', 'user'),
-    'all': ('Для всех', 'users'),
+    'members': ('Для держателей абонемента', 'lock'),
+    'new': ('Для новых пользователей', 'user'),
+    'all': ('Для держателей абонемента и новых пользователей', 'users'),
 }
 
+# Названия, аудитории, состав и варианты цены — по официальной странице паков Маши в GetCourse (Никита, 09.11.2026).
 # items: (название, количество или '', пояснение или '')
+# opts: варианты цены (подпись, пояснение, старая цена или 0, цена) — у паков 1 и 3; виджетов к ним пока нет
+# note: строка про доступ в клуб в строке метаданных
+OPT_MEMBERS = 'Для держателей абонемента, если осталось больше месяца'
+OPT_NOSUB = 'Для тех, у кого абонемент заканчивается или его нет'
 PACKS = [
     dict(id='p1', aud='members', img='p1', pos='50% 42%', sticker='3 программы в одном паке',
-         title='Три интенсива в одном паке', count='65 занятий и практик', term='До конца абонемента',
-         items=[('Стройный живот', '21 занятие', ''), ('Антиотёчность', '23 занятия', ''), ('Стройные и здоровые ноги', '21 занятие', '')],
-         old=1990, price=990),
+         title='Стройное тело', count='65 занятий и практик',
+         items=[('Антиотёк', '23 занятия', ''), ('Стройный живот', '21 занятие', ''), ('Стройные ноги', '21 занятие', '')],
+         opts=[(OPT_MEMBERS, '', 1990, 990), ('Абонемент на месяц + пакет В1', OPT_NOSUB, 0, 1500)]),
     dict(id='p2', aud='new', img='p2', pos='50% 22%',
-         title='Фитнес-пак без доступа в клуб', count='21 тренировка', term='1 месяц',
+         title='Фитнес', count='21 тренировка', term='1 месяц', note='Без полного доступа к клубу',
          items=[('Табата', '7 тренировок', ''), ('Зумба', '7 тренировок', ''), ('Интервальные', '7 тренировок', '')],
          old=3000, price=1500, widget='1680785', sid='e398c503c771b44edda3a589317a0cd11d810c57'),
     dict(id='p3', aud='members', img='p3', pos='50% 32%',
-         title='Отдых и восстановление', count='2 программы', term='До конца абонемента',
-         items=[('Лагерь похудения «Осень 25»', '', ''), ('Санаторий №1', '', '')],
-         old=1990, price=990),
+         title='Отдых и восстановление', count='2 программы',
+         items=[('Лагерь «Осень 25»', '', 'Лёгкость, движение и хорошее настроение'), ('Санаторий № 1', '', 'Восстановление, здоровье и энергия')],
+         opts=[(OPT_MEMBERS, '', 1990, 990), ('Абонемент на месяц + пакет В3', OPT_NOSUB, 0, 1500)]),
     dict(id='p4', aud='all', img='menu', pos='50% 50%',
-         title='Всё меню от «Шагай дома»', count='19 недельных меню + подборки', term='1 месяц',
+         title='Все меню', count='19 недельных меню + подборки', term='1 месяц', note='Без доступа в клуб',
          items=[('19 недельных меню', '', 'завтраки, обеды, ужины, полдники'), ('Меню ПП-пирогов', '', ''), ('2 меню напитков', '', ''),
                 ('Меню десертов', '', ''), ('Меню ПП-куличей', '', '')],
          old=4000, price=2000, widget='1680793', sid='4cc3a15ee284859f267e9b5b068cf31f5c5e535f'),
     dict(id='p5', aud='all', img='p5', pos='50% 38%',
-         title='Красота, здоровье и лёгкость', count='45 занятий и практик', term='3 месяца',
-         items=[('Фейс-йога', '10 занятий', '7 тренировок, 2 тейпирования, зарядка'), ('Женское здоровье с Викой', '17 занятий', ''),
-                ('Антисутулость с Викой', '18 занятий', '15 основных + 3 вводных')],
+         title='Красота, здоровье и лёгкость', count='4 программы', term='3 месяца',
+         items=[('Фейс-йога от Валерии', '10 занятий', 'Упругая кожа и свежий вид'), ('Женское здоровье от Вики', '17 занятий', 'Забота о себе изнутри'),
+                ('Осанка от Вики', '18 занятий', 'Прямая спина и лёгкость в теле'), ('Зарядки 5 минут от Димы', '', 'Больше энергии каждый день')],
          old=3990, price=1990, widget='1680796', sid='01cbca3dda7044eb1882b2b467f12b47d554f5a6'),
     dict(id='p6', aud='new', img='p6', pos='50% 30%',
-         title='Все хиты для внешних', count='24 тренировки', term='3 месяца',
-         items=[('24 тренировки', '', ''), ('57 зарубежных хитов', '', ''), ('48 русских хитов', '', '')],
+         title='Все хиты', count='24 тренировки', term='3 месяца', note='Без доступа в клуб',
+         items=[('Все хиты', '', 'Любимые тренировки'), ('80-е новые', '', 'Новые яркие программы'), ('80-е старые', '', 'Классика, которая всегда вдохновляет')],
          old=3990, price=1990, widget='1680798', sid='d89e2099d1223c0a436a9a2a6b46943046202e04'),
 ]
 
@@ -78,6 +83,7 @@ ICON = {
     'bolt': '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
     'bag': '<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
     'x': '<path d="M6 6l12 12M18 6L6 18"/>',
+    'ban': '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
 }
 
 
@@ -102,7 +108,6 @@ def rub(n):
 
 def card(p):
     label, ic = AUD[p['aud']]
-    pct = round(100 - p['price'] * 100 / p['old'])
     rows = []
     for name, qty, sub in p['items']:
         li = '<li>' + icon('check') + '<span class="pc__name">' + t(name)
@@ -113,13 +118,29 @@ def card(p):
             li += '<b class="pc__qty">' + t(qty) + '</b>'
         rows.append(li + '</li>')
     sticker = '<span class="pc__sticker">' + t(p['sticker']) + '</span>' if p.get('sticker') else ''
-    mem = ('<p class="pc__mem">' + icon('lock') + '<span>' + t(T['MEM_SHORT']) + '</span></p>') if p['aud'] == 'members' else ''
-    if p.get('widget'):
-        buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
-               f'data-title="{html.escape(p["title"])}" data-price="{rub(p["price"])}">' + icon('bag') + 'Купить пак</button>')
+    meta = '<span>' + icon('stack') + t(p['count']) + '</span>'
+    if p.get('term'):
+        meta += '<span>' + icon('clock') + t(p['term']) + '</span>'
+    if p.get('note'):
+        meta += '<span>' + icon('ban') + t(p['note']) + '</span>'
+    stub_btn = '<button class="pc__buy pc__buy--off" type="button" disabled>' + t(T['STUB_BTN']) + '</button>'
+    if p.get('opts'):
+        # два варианта цены по странице Маши: подпись, цена, кнопка-заглушка (виджетов пока нет)
+        foot = ''
+        for label_o, sub_o, old_o, price_o in p['opts']:
+            price_html = (f'<s>{rub(old_o)}</s>' if old_o else '') + f'<b>{rub(price_o)}</b>'
+            if old_o:
+                price_html += f'<i>−{round(100 - price_o * 100 / old_o)}%</i>'
+            foot += (f'<div class="pc__opt"><p class="pc__optl">{t(label_o)}' + (f'<small>{t(sub_o)}</small>' if sub_o else '') + '</p>'
+                     f'<p class="pc__price">{price_html}</p>{stub_btn}</div>')
     else:
-        buy = ('<button class="pc__buy pc__buy--off" type="button" disabled>' + t(T['STUB_BTN']) + '</button>'
-               '<p class="pc__note">' + t(T['STUB_NOTE']) + '</p>')
+        pct = round(100 - p['price'] * 100 / p['old'])
+        if p.get('widget'):
+            buy = (f'<button class="pc__buy" type="button" data-widget="{p["widget"]}" data-sid="{p["sid"]}" '
+                   f'data-title="{html.escape(p["title"])}" data-price="{rub(p["price"])}">' + icon('bag') + 'Купить пак</button>')
+        else:
+            buy = stub_btn
+        foot = f'<p class="pc__price"><s>{rub(p["old"])}</s><b>{rub(p["price"])}</b><i>−{pct}%</i></p>{buy}'
     return f'''<article class="pc" data-aud="{p["aud"]}" id="{p["id"]}">
   <div class="pc__media">
     <img class="pc__photo" src="assets/{p["img"]}.webp" alt="" loading="lazy" style="object-position:{p["pos"]}">
@@ -127,12 +148,10 @@ def card(p):
   </div>
   <div class="pc__body">
     <h3 class="pc__t">{t(p["title"])}</h3>
-    <p class="pc__meta"><span>{icon("stack")}{t(p["count"])}</span><span>{icon("clock")}{t(p["term"])}</span></p>
+    <p class="pc__meta">{meta}</p>
     <ul class="pc__list">{"".join(rows)}</ul>
-    {mem}
     <div class="pc__foot">
-      <p class="pc__price"><s>{rub(p["old"])}</s><b>{rub(p["price"])}</b><i>−{pct}%</i></p>
-      {buy}
+      {foot}
     </div>
   </div>
 </article>'''
@@ -143,7 +162,7 @@ def page():
         return sum(1 for p in PACKS if a == 'any' or p['aud'] == a)
     chips = ''.join(
         f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
-        for a, label in [('any', 'Все предложения'), ('members', 'Только для участников клуба'), ('new', 'Для новых участников'), ('all', 'Для всех')])
+        for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
     return f'''<!doctype html>
 <html lang="ru" data-sale-campaign="{SALE_CAMPAIGN}">
 <head>

@@ -169,3 +169,12 @@ button { font: inherit; color: inherit; }
   .pc, .pc__photo, .pc__buy, .chip { transition: none; }
   .paydlg__spin { animation-duration: 2s; }
 }
+
+/* два варианта цены в одной карточке (паки 1 и 3, по странице Маши) */
+.pc__opt { padding-top: 14px; border-top: 1px dashed #e2d9f0; }
+.pc__opt + .pc__opt { margin-top: 16px; }
+.pc__opt .pc__price { padding-top: 6px; border-top: 0; }
+.pc__optl { color: var(--ink); font: 700 14px/1.35 var(--font-h); }
+.pc__optl small { display: block; margin-top: 3px; color: var(--muted); font: 500 12.5px/1.35 var(--font-b); }
+.pc__opt .pc__buy { margin-top: 10px; }
+.pc__aud { max-width: calc(100% - 20px); }
