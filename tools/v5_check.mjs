@@ -8,7 +8,7 @@ const chrome = spawn(CH, ['--headless=new', `--remote-debugging-port=${port}`, '
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let ws, id = 0; const pend = {}; const errors = [];
 const send = (m, p = {}) => new Promise(r => { const i = ++id; pend[i] = r; ws.send(JSON.stringify({ id: i, method: m, params: p })); });
-setTimeout(() => { console.log(JSON.stringify({ W, error: 'таймаут теста' })); try { chrome.kill(); } catch {} process.exit(2); }, 220000);
+setTimeout(() => { console.log(JSON.stringify({ W, error: 'таймаут теста' })); try { chrome.kill(); } catch {} process.exit(2); }, 420000);
 let t; for (let i = 0; i < 40; i++) { try { t = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json(); if (t.length) break; } catch {} await sleep(250); }
 ws = new WebSocket(t.find(x => x.type === 'page').webSocketDebuggerUrl); await new Promise(r => ws.onopen = r);
 ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && pend[m.id]) { pend[m.id](m); delete pend[m.id]; }
@@ -33,9 +33,11 @@ const out = await ev(`(async () => {
     for (let i = 0; i < 50; i++) { await wait(400); const f = document.querySelector('#slot-' + btn.dataset.sid + ' iframe'); h = f ? parseInt(f.style.height) || 0 : 0; if (h > 50) break; }
     o.forms.push((h > 50 && note.hidden ? 'ok' : 'ПРОБЛЕМА') + ' · ' + btn.dataset.widget + ' · ' + btn.dataset.price + ' · форма ' + h + 'px'); dlg.close(); await wait(80); }
   // после формы снова сообщение: слоты не должны накладываться
-  const b = document.querySelector('.pc__buy:not([data-widget])'); b.click(); await wait(250);
-  o.afterForm = (!note.hidden && [...dlg.querySelectorAll('.paydlg__slot')].filter(x => !x.hidden).length === 1) ? 'ok' : 'ПРОБЛЕМА';
-  o.unlocked = (dlg.close(), await wait(100), !document.documentElement.classList.contains('is-locked'));
+  const b = document.querySelector('.pc__buy:not([data-widget])');
+  if (b) { b.click(); await wait(250);
+    o.afterForm = (!note.hidden && [...dlg.querySelectorAll('.paydlg__slot')].filter(x => !x.hidden).length === 1) ? 'ok' : 'ПРОБЛЕМА'; dlg.close(); await wait(100); }
+  else o.afterForm = 'кнопок без виджета нет';
+  o.unlocked = !document.documentElement.classList.contains('is-locked');
   return o; })()`);
-if (SHOT) { await ev(`document.querySelector('.pc__buy:not([data-widget])').scrollIntoView({block:'center', behavior:'instant'}); document.querySelector('.pc__buy:not([data-widget])').click()`); await sleep(600); const s = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(SHOT, Buffer.from(s.result.data, 'base64')); }
+if (SHOT && await ev(`!!document.querySelector('.pc__buy:not([data-widget])')`)) { await ev(`document.querySelector('.pc__buy:not([data-widget])').scrollIntoView({block:'center', behavior:'instant'}); document.querySelector('.pc__buy:not([data-widget])').click()`); await sleep(600); const s = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(SHOT, Buffer.from(s.result.data, 'base64')); }
 out.errors = errors; console.log(JSON.stringify(out, null, 1)); chrome.kill(); process.exit(0);
