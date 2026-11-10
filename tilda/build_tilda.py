@@ -43,7 +43,9 @@ css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
 css += ('\n.top{position:fixed;left:0;right:0;top:0;z-index:990}'
         '\n.top-spacer{height:64px}'
         '\n@media (min-width:1060px){.top-spacer{height:84px}}'
-        '\n.hero,.shop,.clubs,.how,.faq{scroll-margin-top:90px}\n')
+        '\n.hero,.shop,.clubs,.how,.faq{scroll-margin-top:90px}'
+        '\n.shop--cont{padding-top:0}.shop--cont .grid{margin-top:18px}'
+        '\n@media (min-width:640px){.shop--cont .grid{margin-top:20px}}@media (min-width:1060px){.shop--cont .grid{margin-top:24px}}\n')
 
 
 def scope_selector(sel):
@@ -182,18 +184,26 @@ def pos(patt):
 
 p_shop = pos(r'<section class="shop"')
 p_clubs = pos(r'<section class="clubs"')
-p_dlg = pos(r'<dialog class="pk"')
-blocks = [('шапка и первый экран', body[:p_shop]),
-          ('программы (карточки и фильтры)', body[p_shop:p_clubs]),
-          ('абонементы, как купить, вопросы, подвал', body[p_clubs:p_dlg])]
-# окна «Подробнее» и окно оплаты: набираем по границам </dialog>, пока блок влезает в лимит
-dialogs = re.findall(r'<dialog.*?</dialog>', body[p_dlg:], re.S)
-cur, n = [], 1
-for d in dialogs:
-    if cur and len(wrap(''.join(cur + [d]))) > LIMIT - 1000:
-        blocks.append((f'окна «Подробнее», часть {n}', ''.join(cur))); cur, n = [], n + 1
-    cur.append(d)
-blocks.append((f'окна «Подробнее» и окно оплаты, часть {n}' if n > 1 else 'окна «Подробнее» и окно оплаты', ''.join(cur)))
+p_how = pos(r'<section class="how"')
+p_dlg = pos(r'<dialog')
+blocks = [('шапка и первый экран', body[:p_shop])]
+# программы: карточки целиком, блок не больше лимита; продолжение сетки — отдельная секция .shop--cont
+shop = body[p_shop:p_clubs]
+cards = re.findall(r'<article class="pc".*?</article>', shop, re.S)
+head_html = shop[:shop.index('<article')]
+tail_html = '</div>\n</div></section>\n'
+cont_head = '<section class="shop shop--cont"><div class="wrap">\n  <div class="grid grid--packs">'
+# по 3 карточки в блоке: ряд на десктопе (3 колонки) не рвётся между блоками
+groups = [cards[i:i + 3] for i in range(0, len(cards), 3)]
+for gi, g in enumerate(groups, 1):
+    h = head_html if gi == 1 else cont_head
+    if len(wrap(h + ''.join(g) + tail_html)) > LIMIT - 500:
+        raise SystemExit(f'программы, часть {gi}: больше лимита Тильды — нужен другой разрез')
+for gi, g in enumerate(groups, 1):
+    h = head_html if gi == 1 else cont_head
+    blocks.append((f'программы, часть {gi}' if len(groups) > 1 else 'программы', h + ''.join(g) + tail_html))
+blocks.append(('абонементы', body[p_clubs:p_how]))
+blocks.append(('как купить, вопросы, подвал, окно оплаты', body[p_how:]))
 
 files = []
 for i, part in enumerate(split_rules(css_scoped, CSS_CHUNK), 1):

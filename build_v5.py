@@ -35,14 +35,14 @@ CLUB_T = dict(
     MEM='Участникам клуба', NEW='Новым участникам',
 )
 CLUBS = [
-    dict(id='c1', aud='all', img='sanatoriy', pos='50% 8%', mpos='50% 36%', title='Клуб «Удвоение\u00a06+6»',
+    dict(id='c1', aud='all', img='sanatoriy', pos='50% 36%', mpos='50% 36%', title='Клуб «Удвоение\u00a06+6»',
          line='6 месяцев абонемента и ещё 6 в подарок', chips=[('clock', '12 месяцев'), ('check', 'Полный доступ к клубу')],
          about='Платите за 6 месяцев абонемента и получаете ещё 6 в подарок. Итого 12 месяцев полного доступа к тренировкам и программам клуба. Цены распродажи действуют 10–12 ноября.',
          mem=3800, new=4400, card_price=('от', 3800), month=('Выходит от 317 ₽ за месяц', 'Выходит по 317 ₽ за месяц', 'Выходит по 367 ₽ за месяц')),
-    dict(id='c2', aud='all', img='club2', pos='50% 25%', mpos='50% 22%', title='Клуб «Навсегда»',
+    dict(id='c2', aud='all', img='club2', pos='50% 22%', mpos='50% 22%', title='Клуб «Навсегда»',
          line='Абонемент, который не нужно продлевать', chips=[('clock', 'Бессрочно'), ('check', 'Полный доступ к клубу')],
          about='Полный доступ к клубу без ограничения срока: можно заниматься дома в удобном ритме и возвращаться к любимым тренировкам. Цены распродажи действуют 10–12 ноября.',
-         mem=7990, new=9990, card_price=('', 9990)),
+         mem=7990, new=9990, card_price=('', 9990), new_first=True),
 ]
 
 
@@ -123,31 +123,12 @@ def main_price(p):
     return p['old'], p['price']
 
 
-def card(p):
-    """Превью: фото, бейдж, название, одна строка сути (лид или объём), главная цена, «Подробнее»."""
-    line = p.get('lead') or p['count']
-    old, price = main_price(p)
-    label, ic = AUD[p['aud']]
-    return f'''<article class="pc" data-aud="{p["aud"]}" id="{p["id"]}">
-  <div class="pc__media">
-    {photo(p)}
-    <span class="pc__aud pc__aud--{p["aud"]}">{icon(ic)}{t(AUD_SHORT[p["aud"]])}</span>
-  </div>
-  <div class="pc__body">
-    <h3 class="pc__t">{t(name(p))}</h3>
-    <p class="pc__line">{t(line)}</p>
-    <div class="pc__foot">{price_row(old, price)}<button class="pc__more" type="button" data-pk="pk-{p["id"]}" aria-haspopup="dialog">Подробнее</button></div>
-  </div>
-</article>'''
-
-
-def pack_dialog(p):
-    """Окно пака: лид, описание, мета, полный состав с сутью программ, все варианты покупки с условиями."""
+def contents(p):
+    """Содержимое программы: описание, чипы, «Что внутри» с сутью программ, варианты цены с условиями и «Купить»."""
     rows = ''.join(f'<li>{li_icon(n)}<span class="pc__item"><b>{t(n + (" — " + q if q else ""))}</b>'
                    + (f'<small>{t(sub)}</small>' if sub else '')
                    + (f'<em class="pc__flag">{t(NOINT[n])}</em>' if n in NOINT else '') + '</span></li>'
                    for n, q, sub in p['items'])
-    label, ic = AUD[p['aud']]
     lead = f'<p class="pc__lead">{t(p["lead"])}</p>' if p.get('lead') else ''
     about = f'<p class="pc__about">{t(p["about"])}</p>' if p.get('about') else ''
     meta = '<span>' + icon('stack') + t(p['count']) + '</span>'
@@ -157,82 +138,67 @@ def pack_dialog(p):
         meta += '<span class="pc__chip--no">' + icon('ban') + t(p['note']) + '</span>'
     opts = ''
     if p.get('opts'):
-        # паки 1 и 3: 990 ₽ держателям (виджета пока нет — кнопка без действия) + 2 490 ₽ с клубом на месяц (виджет GetCourse)
+        # «Стройное тело» и «Отдых»: 990 ₽ держателям (виджета пока нет — кнопка без действия) + 2 490 ₽ с клубом на месяц (виджет GetCourse)
         for n, o in enumerate(p['opts']):
             cap, title_o, old_o, price_o = o[:4]
             w, sid = (o[4], o[5]) if len(o) > 4 else (None, None)
             opt_html = option(cap, price_row(old_o, price_o), buy_btn(title_o or name(p), price_o, w, sid, ghost=n > 0), title_o)
-            # второй вариант (2 490 ₽ с клубом на месяц) — под строкой-переключателем, покупка и виджет на месте
+            # второй вариант (2 490 ₽) — свёрнут, раскрывается по тапу (Мария 09.11: «придумай как скрыть это»)
             opts += opt_html if n == 0 else f'<details class="pk__alt"><summary>{t(ALT_SUMMARY)}</summary>{opt_html}</details>'
     else:
         opts += option(AUD_COND.get(p['aud']), price_row(p['old'], p['price']), buy_btn(name(p), p['price'], p['widget'], p['sid']))
         if p.get('extra'):
-            # «Фитнес»: клуб на месяц за 1 600 ₽ — кнопка пока без действия
+            # «Фитнес»: клуб на месяц за 1 600 ₽ — виджета нет, кнопка без действия
             et, es, ep = p['extra']
             opts += option(es, price_row(0, ep), buy_btn(et, ep, ghost=True), et)
-    return f'''<dialog class="pk" id="pk-{p["id"]}" aria-labelledby="pk-{p["id"]}-t">
-  <button class="pk__x" type="button" aria-label="Закрыть">{icon("x")}</button>
-  <div class="pk__in">
-    <div class="pk__media">{photo(p, modal=True)}<span class="pc__aud pc__aud--{p["aud"]}">{icon(ic)}{t(label)}</span></div>
-    <div class="pk__body">
-      <h3 class="pc__t" id="pk-{p["id"]}-t">{t(name(p))}</h3>{lead}{about}
-      <p class="pc__meta">{meta}</p>
-      <p class="pc__in">Что внутри:</p>
-      <ul class="pc__list">{rows}</ul>
-      <div class="pk__opts">{opts}</div>
-    </div>
-  </div>
-</dialog>'''
+    return (f'{lead}{about}\n    <p class="pc__meta">{meta}</p>\n    <p class="pc__in">Что внутри:</p>\n    <ul class="pc__list">{rows}</ul>\n'
+            f'    <div class="pc__foot"><div class="pk__opts">{opts}</div></div>')
 
 
-def club_card(c):
-    """Превью абонемента: как у наборов — фото, «Для всех», название, строка, цена «от», «Подробнее»."""
-    label, ic = AUD[c['aud']]
-    return f'''<article class="pc pc--club" data-aud="{c["aud"]}" id="{c["id"]}">
+def card(p):
+    """10.11 (Мария): всё прямо в карточке — без короткого превью и окна «Подробнее»."""
+    label, ic = AUD[p['aud']]
+    return f'''<article class="pc" data-aud="{p["aud"]}" id="{p["id"]}">
   <div class="pc__media">
-    {photo(c)}
-    <span class="pc__aud pc__aud--{c["aud"]}">{icon(ic)}{t(AUD_SHORT[c["aud"]])}</span>
+    {photo(p)}
+    <span class="pc__aud pc__aud--{p["aud"]}">{icon(ic)}{t(label)}</span>
   </div>
   <div class="pc__body">
-    <h3 class="pc__t">{t(c["title"])}</h3>
-    <p class="pc__line">{t(c["line"])}</p>
-    <div class="pc__foot"><p class="pc__price"><b>{("<small>" + c["card_price"][0] + "</small>&nbsp;") if c["card_price"][0] else ""}{rub(c["card_price"][1])}</b></p>{('<p class="pc__month">' + t(c["month"][0]) + '</p>') if c.get("month") else ""}<button class="pc__more" type="button" data-pk="pk-{c["id"]}" aria-haspopup="dialog">Подробнее</button></div>
+    <h3 class="pc__t">{t(name(p))}</h3>{contents(p)}
   </div>
 </article>'''
 
 
-def club_dialog(c):
-    """Окно абонемента: описание, что есть в клубе, две цены (участникам клуба / новым участникам). Виджетов нет — кнопки без действия."""
+def club_card(c):
+    """Абонемент целиком на странице: описание, чипы, что есть в клубе, обе цены с цена-за-месяц и «Купить» (виджетов нет)."""
     label, ic = AUD[c['aud']]
     meta = ''.join('<span>' + icon(i) + t(x) + '</span>' for i, x in c['chips'])
     rows = ''.join(f'<li>{li_icon("")}<span class="pc__item"><b>{t(x)}</b></span></li>' for x in CLUB_T['WHAT'])
     mo = c.get('month')
     m1 = f'<p class="pc__month">{t(mo[1])}</p>' if mo else ''
     m2 = f'<p class="pc__month">{t(mo[2])}</p>' if mo else ''
-    opts = (option(CLUB_T['MEM'], price_row(0, c['mem']) + m1, buy_btn(c['title'], c['mem']))
-            + option(CLUB_T['NEW'], price_row(0, c['new']) + m2, buy_btn(c['title'], c['new'], ghost=True)))
-    return f'''<dialog class="pk" id="pk-{c["id"]}" aria-labelledby="pk-{c["id"]}-t">
-  <button class="pk__x" type="button" aria-label="Закрыть">{icon("x")}</button>
-  <div class="pk__in">
-    <div class="pk__media">{photo(c, modal=True)}<span class="pc__aud pc__aud--{c["aud"]}">{icon(ic)}{t(label)}</span></div>
-    <div class="pk__body">
-      <h3 class="pc__t" id="pk-{c["id"]}-t">{t(c["title"])}</h3>
-      <p class="pc__about">{t(c["about"])}</p>
-      <p class="pc__meta">{meta}</p>
-      <p class="pc__in">{t(CLUB_T["WHAT_H"])}</p>
-      <ul class="pc__list">{rows}</ul>
-      <div class="pk__opts">{opts}</div>
-    </div>
+    # порядок цен: «Навсегда» — сначала 9 990 ₽ для новых (Мария 09.11), 6+6 — сначала участникам
+    o_mem = option(CLUB_T['MEM'], price_row(0, c['mem']) + m1, buy_btn(c['title'], c['mem'], ghost=c.get('new_first', False)))
+    o_new = option(CLUB_T['NEW'], price_row(0, c['new']) + m2, buy_btn(c['title'], c['new'], ghost=not c.get('new_first', False)))
+    opts = (o_new + o_mem) if c.get('new_first') else (o_mem + o_new)
+    return f'''<article class="pc pc--club" data-aud="{c["aud"]}" id="{c["id"]}">
+  <div class="pc__media">
+    {photo(c)}
+    <span class="pc__aud pc__aud--{c["aud"]}">{icon(ic)}{t(label)}</span>
   </div>
-</dialog>'''
+  <div class="pc__body">
+    <h3 class="pc__t">{t(c["title"])}</h3>
+    <p class="pc__lead">{t(c["line"])}</p>
+    <p class="pc__about">{t(c["about"])}</p>
+    <p class="pc__meta">{meta}</p>
+    <p class="pc__in">{t(CLUB_T["WHAT_H"])}</p>
+    <ul class="pc__list">{rows}</ul>
+    <div class="pc__foot"><div class="pk__opts">{opts}</div></div>
+  </div>
+</article>'''
 
 
 def page():
-    def count(a):
-        return sum(1 for p in PACKS if a == 'any' or p['aud'] == a)
-    chips = ''.join(
-        f'<button class="chip{" is-on" if a == "any" else ""}" type="button" data-aud="{a}">{t(label)}<i>{count(a)}</i></button>'
-        for a, label in [('any', 'Все предложения'), ('members', 'Для держателей абонемента'), ('new', 'Для новых пользователей'), ('all', 'Для всех')])
     legend = ''.join(
         f'<li class="lg lg--{k}"><span class="lg__ic">{icon(AUD[k][1])}</span><div><b>{t(AUD[k][0])}</b><p>{t(x)}</p></div></li>'
         for k, x in [('members', d.HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
@@ -277,7 +243,6 @@ def page():
 
 <section class="shop" id="packs"><div class="wrap">
   <h2 class="sr-only">Программы распродажи</h2>
-  <div class="chips">{chips}</div>
   <div class="grid grid--packs">{"".join(card(p) for p in PACKS)}</div>
 </div></section>
 
@@ -299,7 +264,6 @@ def page():
 </div></section>
 </main>
 <div class="wrap">{d.FOOTER}</div>
-{"".join(pack_dialog(p) for p in PACKS)}{"".join(club_dialog(c) for c in CLUBS)}
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>

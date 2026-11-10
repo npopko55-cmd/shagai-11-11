@@ -166,10 +166,10 @@ button { font: inherit; color: inherit; }
 .grid--clubs { margin-top: 20px; }
 .pc__price b small { margin-right: 1px; font-size: .55em; font-weight: 700; }
 
-/* 10.11: скрытый заголовок, пометка «без интерактива», свёрнутый второй вариант, цена за месяц */
+/* 10.11: всё в карточках, без фильтров и окна «Подробнее»; скрытый заголовок, пометка «без интерактива», свёрнутый второй вариант, цена за месяц */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .shop { padding-top: 28px; }
-.shop .chips { margin-top: 0; }
+.shop .grid { margin-top: 0; }
 .pc__flag { display: inline-block; margin-top: 5px; padding: 3px 9px; border-radius: 999px; background: #fff0f6; color: var(--pink); font: 700 12px/1.3 var(--font-h); }
 .pk__alt { border: 1px solid var(--line); border-radius: 20px; background: #fcfaff; }
 .pk__alt summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 16px; color: var(--violet); font: 700 14.5px/1.35 var(--font-h); cursor: pointer; list-style: none; }
@@ -278,9 +278,7 @@ button { font: inherit; color: inherit; }
   .shop__lead { font-size: 17px; }
   .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 28px; }
   .grid--clubs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pc--club { flex-direction: row; }
-  .pc--club .pc__media { flex: 0 0 46%; aspect-ratio: auto; min-height: 330px; }
-  .pc--club .pc__body { padding: 22px 16px 10px 24px; }
+  .pc--club .pc__media { aspect-ratio: 16 / 10; }
   .clubs { padding-top: 64px; }
   .pc__t { font-size: 28px; }
   .pc__price b { font-size: 36px; }
@@ -295,3 +293,7 @@ button { font: inherit; color: inherit; }
   .btn, .pc__buy, .pc__more { transition: none; }
   .paydlg__spin { animation-duration: 2s; }
 }
+
+/* 10.11: содержимое прямо в карточке */
+.pc .pk__opts { margin-top: 0; }
+.pc .pk__opt .pc__price b { font-size: 32px; }
