@@ -14,36 +14,41 @@ import v4_data_snapshot as d
 ROOT = pathlib.Path(__file__).parent
 OUT = ROOT / 'v5'
 # фото «Все хиты» как на концепте: тренер с поднятой рукой (настоящий кадр клуба)
-PHOTO = {'p6': ('hits', '50% 18%'), 'p3': ('sanatoriy', '50% 8%')}
+# 10.11 (Мария): «Отдых» — другой кадр (две девушки в движении), «Красота» — Валерия снова на фоне цветов (исходный кадр, v2/assets/p5.webp)
+PHOTO = {'p6': ('hits', '50% 18%'), 'p3': ('hits2', '50% 30%'), 'p5': ('valeria-flowers', '50% 35%')}
 # кадр в окне «Подробнее» (шапка окна 4/3 на телефоне, 16/10 на десктопе): у вертикальных фото — лицо и корпус, а не поднятая рука
-MPOS = {'p1': '50% 45%', 'p2': '50% 25%', 'p3': '50% 36%', 'p4': '50% 50%', 'p5': '50% 40%', 'p6': '50% 42%'}
+MPOS = {'p1': '50% 45%', 'p2': '50% 25%', 'p3': '50% 30%', 'p4': '50% 50%', 'p5': '50% 35%', 'p6': '50% 42%'}
+# п.7 (Мария): пометка у Антиотёка и Лагеря
+NOINT = {'Антиотёк': '*без интерактива в чатах', 'Лагерь «Осень 25»': '*без интерактива в чатах'}
+# п.3: второй вариант 2 490 ₽ в окне свёрнут в одну строку (na-pero 10.11)
+ALT_SUMMARY = 'Нет абонемента или он меньше 30 дней: 2 490 ₽'
 
 # Абонементы клуба 11.11 (ТЗ Сони; цены «участникам клуба / новым участникам» — из v2/_build_v2.py).
 # Тексты — na-pero 09.11.2026. Старых цен в материалах нет — не зачёркиваем.
 # Виджетов GetCourse на эти цены в проекте нет: кнопки «Купить» без data-widget, ничего не делают.
 CLUB_T = dict(
     H2='Абонементы клуба',
-    LEAD='Клуб на год или навсегда — для тех, у кого уже есть абонемент, и для новых участников.',
+    LEAD='Удваиваем абонемент на 6 месяцев или даём доступ к клубу навсегда — для тех, у кого уже есть абонемент, и для новых участников.',
     WHAT_H='Что есть в клубе:',
     WHAT=['25 фитнес-программ и курсов, больше 400 тренировок', 'План тренировок на каждый день недели', 'Тренировки от 5 до 40 минут',
           'Шагай.FM — фитнес-эфир нон-стоп под треки DJ', 'Шаговая аэробика под музыку: не нужно быть спортивной или уметь танцевать'],
     MEM='Участникам клуба', NEW='Новым участникам',
 )
 CLUBS = [
-    dict(id='c1', aud='all', img='hits2', pos='50% 30%', mpos='50% 30%', title='Клуб «Удвоение\u00a06+6»',
+    dict(id='c1', aud='all', img='sanatoriy', pos='50% 8%', mpos='50% 36%', title='Клуб «Удвоение\u00a06+6»',
          line='6 месяцев абонемента и ещё 6 в подарок', chips=[('clock', '12 месяцев'), ('check', 'Полный доступ к клубу')],
-         about='Год полного доступа к тренировкам и программам клуба: 6 месяцев абонемента и ещё 6 месяцев в подарок. Цены распродажи действуют 10–12 ноября.',
-         mem=3800, new=4400),
+         about='Платите за 6 месяцев абонемента и получаете ещё 6 в подарок. Итого 12 месяцев полного доступа к тренировкам и программам клуба. Цены распродажи действуют 10–12 ноября.',
+         mem=3800, new=4400, card_price=('от', 3800), month=('Выходит от 317 ₽ за месяц', 'Выходит по 317 ₽ за месяц', 'Выходит по 367 ₽ за месяц')),
     dict(id='c2', aud='all', img='club2', pos='50% 25%', mpos='50% 22%', title='Клуб «Навсегда»',
          line='Абонемент, который не нужно продлевать', chips=[('clock', 'Бессрочно'), ('check', 'Полный доступ к клубу')],
          about='Полный доступ к клубу без ограничения срока: можно заниматься дома в удобном ритме и возвращаться к любимым тренировкам. Цены распродажи действуют 10–12 ноября.',
-         mem=7990, new=9990),
+         mem=7990, new=9990, card_price=('', 9990)),
 ]
 
 
 def name(p):
-    # правка Маши 09.11: в названиях — «набор «…»»
-    return f'Набор «{p["title"]}»'
+    # 10.11 (Мария и Дима): слово «набор» убрано — название программы без приставки
+    return p['title']
 t, rub, icon, AUD, PACKS, T = d.t, d.rub, d.icon, d.AUD, d.PACKS, d.T
 
 # линейные иконки состава (как на концепте)
@@ -139,7 +144,8 @@ def card(p):
 def pack_dialog(p):
     """Окно пака: лид, описание, мета, полный состав с сутью программ, все варианты покупки с условиями."""
     rows = ''.join(f'<li>{li_icon(n)}<span class="pc__item"><b>{t(n + (" — " + q if q else ""))}</b>'
-                   + (f'<small>{t(sub)}</small>' if sub else '') + '</span></li>'
+                   + (f'<small>{t(sub)}</small>' if sub else '')
+                   + (f'<em class="pc__flag">{t(NOINT[n])}</em>' if n in NOINT else '') + '</span></li>'
                    for n, q, sub in p['items'])
     label, ic = AUD[p['aud']]
     lead = f'<p class="pc__lead">{t(p["lead"])}</p>' if p.get('lead') else ''
@@ -155,7 +161,9 @@ def pack_dialog(p):
         for n, o in enumerate(p['opts']):
             cap, title_o, old_o, price_o = o[:4]
             w, sid = (o[4], o[5]) if len(o) > 4 else (None, None)
-            opts += option(cap, price_row(old_o, price_o), buy_btn(title_o or name(p), price_o, w, sid, ghost=n > 0), title_o)
+            opt_html = option(cap, price_row(old_o, price_o), buy_btn(title_o or name(p), price_o, w, sid, ghost=n > 0), title_o)
+            # второй вариант (2 490 ₽ с клубом на месяц) — под строкой-переключателем, покупка и виджет на месте
+            opts += opt_html if n == 0 else f'<details class="pk__alt"><summary>{t(ALT_SUMMARY)}</summary>{opt_html}</details>'
     else:
         opts += option(AUD_COND.get(p['aud']), price_row(p['old'], p['price']), buy_btn(name(p), p['price'], p['widget'], p['sid']))
         if p.get('extra'):
@@ -188,7 +196,7 @@ def club_card(c):
   <div class="pc__body">
     <h3 class="pc__t">{t(c["title"])}</h3>
     <p class="pc__line">{t(c["line"])}</p>
-    <div class="pc__foot"><p class="pc__price"><b><small>от</small>&nbsp;{rub(c["mem"])}</b></p><button class="pc__more" type="button" data-pk="pk-{c["id"]}" aria-haspopup="dialog">Подробнее</button></div>
+    <div class="pc__foot"><p class="pc__price"><b>{("<small>" + c["card_price"][0] + "</small>&nbsp;") if c["card_price"][0] else ""}{rub(c["card_price"][1])}</b></p>{('<p class="pc__month">' + t(c["month"][0]) + '</p>') if c.get("month") else ""}<button class="pc__more" type="button" data-pk="pk-{c["id"]}" aria-haspopup="dialog">Подробнее</button></div>
   </div>
 </article>'''
 
@@ -198,8 +206,11 @@ def club_dialog(c):
     label, ic = AUD[c['aud']]
     meta = ''.join('<span>' + icon(i) + t(x) + '</span>' for i, x in c['chips'])
     rows = ''.join(f'<li>{li_icon("")}<span class="pc__item"><b>{t(x)}</b></span></li>' for x in CLUB_T['WHAT'])
-    opts = (option(CLUB_T['MEM'], price_row(0, c['mem']), buy_btn(c['title'], c['mem']))
-            + option(CLUB_T['NEW'], price_row(0, c['new']), buy_btn(c['title'], c['new'], ghost=True)))
+    mo = c.get('month')
+    m1 = f'<p class="pc__month">{t(mo[1])}</p>' if mo else ''
+    m2 = f'<p class="pc__month">{t(mo[2])}</p>' if mo else ''
+    opts = (option(CLUB_T['MEM'], price_row(0, c['mem']) + m1, buy_btn(c['title'], c['mem']))
+            + option(CLUB_T['NEW'], price_row(0, c['new']) + m2, buy_btn(c['title'], c['new'], ghost=True)))
     return f'''<dialog class="pk" id="pk-{c["id"]}" aria-labelledby="pk-{c["id"]}-t">
   <button class="pk__x" type="button" aria-label="Закрыть">{icon("x")}</button>
   <div class="pk__in">
@@ -232,7 +243,7 @@ def page():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Распродажа 11.11 — наборы программ «Шагай Дома»</title>
+<title>Распродажа 11.11 — программы и абонементы клуба «Шагай Дома»</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#f6f0ff">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -242,8 +253,8 @@ def page():
 <body id="top">
 <header class="top"><div class="wrap top__in">
   <a class="logo" href="#top" aria-label="Шагай Дома">{d.LOGO}</a>
-  <nav class="top__nav" aria-label="Разделы"><a href="#packs">Наборы программ</a><a href="#clubs">Абонементы</a><a href="#how">Как купить</a><a href="#faq">Вопросы</a></nav>
-  <a class="btn btn--sm" href="#packs">Выбрать набор</a>
+  <nav class="top__nav" aria-label="Разделы"><a href="#packs">Программы</a><a href="#clubs">Абонементы</a><a href="#how">Как купить</a><a href="#faq">Вопросы</a></nav>
+  <a class="btn btn--sm" href="#packs">Выбрать программы</a>
 </div></header>
 <main>
 <section class="hero"><div class="wrap hero__in">
@@ -251,8 +262,8 @@ def page():
     <span class="hero__pill">Акция 11.11</span>
     <h1 class="hero__h"><span>Большая распродажа</span> <em>любимых программ</em></h1>
     <p class="hero__lead">{t(T["HERO_LEAD"])}</p>
-    <a class="btn btn--lg" href="#packs">Выбрать набор</a>
-    <ul class="perks"><li>{icon("gift")}<span>Специальные<br>цены</span></li><li>{icon("loop")}<span>Выбирай<br>свой набор</span></li><li>{icon("bolt")}<span>Действуй<br>10–12 ноября</span></li></ul>
+    <a class="btn btn--lg" href="#packs">Выбрать программы</a>
+    <ul class="perks"><li>{icon("gift")}<span>Специальные<br>цены</span></li><li>{icon("loop")}<span>Выбирай<br>программы</span></li><li>{icon("bolt")}<span>Действуй<br>10–12 ноября</span></li></ul>
   </div>
   <div class="hero__art" aria-hidden="true">
     <span class="hero__blob"></span>
@@ -260,15 +271,12 @@ def page():
     <span class="ring ring--back"></span>
     <img class="hero__cut" src="assets/hero-cut.webp" alt="">
     <span class="ring ring--front"></span>
-    <p class="hero__card">Любимые программы в&nbsp;выгодных наборах</p>
+    <p class="hero__card">Любимые программы клуба со&nbsp;скидкой</p>
   </div>
 </div></section>
 
 <section class="shop" id="packs"><div class="wrap">
-  <p class="kicker"><span>Распродажа</span>Наборы программ клуба «ШАГАЙ ДОМА⚡️»</p>
-  <h2 class="h2">Наборы программ</h2>
-  <p class="shop__lead">{t(T["PACKS_LEAD"])}</p>
-  <ul class="legend">{legend}</ul>
+  <h2 class="sr-only">Программы распродажи</h2>
   <div class="chips">{chips}</div>
   <div class="grid grid--packs">{"".join(card(p) for p in PACKS)}</div>
 </div></section>
@@ -282,7 +290,7 @@ def page():
 <section class="how" id="how"><div class="wrap">
   <h2 class="h2 h2--s">{t(T["HOW_H"])}</h2>
   <ol class="steps">{steps}</ol>
-  <a class="btn" href="#packs">Выбрать набор</a>
+  <a class="btn" href="#packs">Выбрать программы</a>
 </div></section>
 
 <section class="faq" id="faq"><div class="wrap">

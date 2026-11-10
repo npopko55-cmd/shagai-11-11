@@ -166,6 +166,20 @@ button { font: inherit; color: inherit; }
 .grid--clubs { margin-top: 20px; }
 .pc__price b small { margin-right: 1px; font-size: .55em; font-weight: 700; }
 
+/* 10.11: скрытый заголовок, пометка «без интерактива», свёрнутый второй вариант, цена за месяц */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.shop { padding-top: 28px; }
+.shop .chips { margin-top: 0; }
+.pc__flag { display: inline-block; margin-top: 5px; padding: 3px 9px; border-radius: 999px; background: #fff0f6; color: var(--pink); font: 700 12px/1.3 var(--font-h); }
+.pk__alt { border: 1px solid var(--line); border-radius: 20px; background: #fcfaff; }
+.pk__alt summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 16px; color: var(--violet); font: 700 14.5px/1.35 var(--font-h); cursor: pointer; list-style: none; }
+.pk__alt summary::-webkit-details-marker { display: none; }
+.pk__alt summary::after { content: '+'; flex: none; font-size: 20px; font-weight: 800; }
+.pk__alt[open] summary::after { content: '−'; }
+.pk__alt .pk__opt { margin: 0 8px 8px; border: 0; background: #fff; }
+.pc__month { margin-top: 6px; color: var(--violet); font: 700 14px/1.3 var(--font-h); }
+.pc__foot .pc__month { margin-top: 4px; }
+
 /* как купить и вопросы */
 .how, .faq { padding: 40px 0 0; }
 .steps { display: grid; gap: 12px; margin: 20px 0 20px; }
