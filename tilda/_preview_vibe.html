@@ -104,14 +104,27 @@ html.is-locked{overflow:hidden}
 .shd1111 .shop{padding-top:28px}
 .shd1111 .shop .grid{margin-top:0}
 .shd1111 .pc__flag{display:inline-block;margin-top:5px;padding:3px 9px;border-radius:999px;background:#fff0f6;color:var(--pink);font:700 12px/1.3 var(--font-h)}
-.shd1111 .pk__alt{border:1px solid var(--line);border-radius:20px;background:#fcfaff}
-.shd1111 .pk__alt summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;color:var(--violet);font:700 14.5px/1.35 var(--font-h);cursor:pointer;list-style:none}
+.shd1111 .pk__alt{border:1.5px solid #c9a8fb;border-radius:20px;background:linear-gradient(180deg,#f3e9ff 0%,#fbf7ff 100%);box-shadow:0 8px 20px rgba(123,47,242,.1)}
+.shd1111 .pk__alt summary{display:flex;flex-direction:column;gap:12px;padding:16px;cursor:pointer;list-style:none;border-radius:18px;-webkit-tap-highlight-color:transparent}
 .shd1111 .pk__alt summary::-webkit-details-marker{display:none}
-.shd1111 .pk__alt summary::after{content:'+';flex:none;font-size:20px;font-weight:800}
-.shd1111 .pk__alt[open] summary::after{content:'−'}
+.shd1111 .pk__alt summary:focus-visible{outline:3px solid #c8a8ff;outline-offset:2px}
+.shd1111 .pk__altq b{display:block;color:var(--ink);font:800 15px/1.3 var(--font-h)}
+.shd1111 .pk__altq span{display:block;margin-top:4px;color:var(--violet);font:700 14.5px/1.35 var(--font-h)}
+.shd1111 .pk__altgo{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 16px;border:1.5px solid var(--violet);border-radius:14px;background:#fff;color:var(--violet);font:700 15.5px/1.2 var(--font-h);transition:background .2s,color .2s}
+.shd1111 .pk__alt summary:hover .pk__altgo{background:var(--violet);color:#fff}
+.shd1111 .pk__altgo .ic{width:20px;height:20px;stroke-width:2.4;transition:transform .2s}
+.shd1111 .pk__alt-c,.shd1111 .pk__alt[open] .pk__alt-o{display:none}
+.shd1111 .pk__alt[open] .pk__alt-c{display:inline}
+.shd1111 .pk__alt[open] .pk__altgo .ic{transform:rotate(180deg)}
+.shd1111 .pk__alt[open] summary{padding-bottom:12px}
 .shd1111 .pk__alt .pk__opt{margin:0 8px 8px;border:0;background:#fff}
 .shd1111 .pc__month{margin-top:6px;color:var(--violet);font:700 14px/1.3 var(--font-h)}
 .shd1111 .pc__foot .pc__month{margin-top:4px}
+.shd1111 .jump{display:flex;gap:8px;margin:0 -16px 18px;padding:2px 16px 6px;overflow-x:auto;scrollbar-width:none}
+.shd1111 .jump::-webkit-scrollbar{display:none}
+.shd1111 .jump a{flex:none;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:700 14px/1.2 var(--font-h);text-decoration:none;box-shadow:0 4px 12px rgba(80,30,160,.05)}
+.shd1111 .jump .jump__club{border-color:transparent;background:var(--grad);color:#fff}
+.shd1111 .pc,.shd1111 #clubs,.shd1111 #how,.shd1111 #faq{scroll-margin-top:78px}
 .shd1111 .how,.shd1111 .faq{padding:40px 0 0}
 .shd1111 .steps{display:grid;gap:12px;margin:20px 0 20px}
 .shd1111 .steps li{display:flex;align-items:center;gap:14px;padding:18px;border-radius:20px;background:rgba(255,255,255,.9);box-shadow:var(--sh)}
@@ -146,9 +159,13 @@ html.is-locked{overflow:hidden}
 .shd1111 .paydlg__body{position:relative;min-height:260px;padding:6px 10px 18px}
 .shd1111 .paydlg__slot{position:relative;z-index:1;background:#fff}
 .shd1111 .paydlg__slot[hidden]{display:none}
+.shd1111 .paydlg__note{padding:22px 12px 10px;font-size:16px;line-height:1.5}
+.shd1111 .paydlg__note p + p{margin-top:10px;color:var(--ink2)}
+.shd1111 .paydlg__note a{display:inline-block;margin-top:6px;color:var(--violet);font:800 22px/1.2 var(--font-h);text-decoration:none;white-space:nowrap}
 .shd1111 .paydlg__spin{position:absolute;top:90px;left:50%;width:34px;height:34px;margin-left:-17px;border:3px solid #efe7fd;border-top-color:var(--violet);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media (min-width:640px){.shd1111 .wrap{padding:0 24px}
+@media (min-width:640px){.shd1111 .jump{display:none}
+.shd1111 .wrap{padding:0 24px}
 .shd1111 .hero__h{font-size:48px}
 .shd1111 .hero__lead{font-size:17.5px;max-width:560px}
 .shd1111 .perks{grid-template-columns:repeat(3,auto)}
@@ -167,7 +184,8 @@ html.is-locked{overflow:hidden}
 .shd1111 .paydlg{width:min(560px,calc(100% - 32px));margin:auto;border-radius:24px}
 .shd1111 .pk__opts{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .shd1111 .paydlg__head{padding:22px 24px 14px;border-radius:24px 24px 0 0}}
-@media (min-width:1060px){.shd1111 .top__in{min-height:84px}
+@media (min-width:1060px){.shd1111 .pc,.shd1111 #clubs,.shd1111 #how,.shd1111 #faq{scroll-margin-top:100px}
+.shd1111 .top__in{min-height:84px}
 .shd1111 .logo{width:130px}
 .shd1111 .top__nav{display:flex;gap:40px}
 .shd1111 .top__nav a{font:600 16px/1 var(--font-h);text-decoration:none}
@@ -201,6 +219,7 @@ html.is-locked{overflow:hidden}
 @media (min-width:1280px){.shd1111 .hero__h{font-size:64px}
 .shd1111 .hero__num{font-size:250px}}
 @media (prefers-reduced-motion:reduce){.shd1111{scroll-behavior:auto}
+.shd1111 .pk__altgo,.shd1111 .pk__altgo .ic{transition:none}
 .shd1111 .btn,.shd1111 .pc__buy{transition:none}
 .shd1111 .paydlg__spin{animation-duration:2s}}
 .shd1111 .pc .pk__opts{margin-top:0}
@@ -254,7 +273,7 @@ html.is-locked{overflow:hidden}
     <span class="hero__blob"></span>
     <p class="hero__num">11<i>.</i>11</p>
     <span class="ring ring--back"></span>
-    <img class="hero__cut" src="https://static.tildacdn.com/tila6337-3363-4336-b733-623832363038/hero-cut.webp" alt="">
+    <img class="hero__cut" src="https://static.tildacdn.com/tila6337-3363-4336-b733-623832363038/hero-cut.webp" alt="" width="811" height="900" fetchpriority="high">
     <span class="ring ring--front"></span>
     <p class="hero__card">Любимые программы клуба со&nbsp;скидкой</p>
   </div>
@@ -264,9 +283,10 @@ html.is-locked{overflow:hidden}
 <div class="t-rec" style="background:#f6f0ff"><div class="shd1111">
 <section class="shop" id="packs"><div class="wrap">
   <h2 class="sr-only">Программы распродажи</h2>
+  <nav class="jump" aria-label="Разделы страницы"><a href="#p1">Стройное тело</a><a href="#p2">Фитнес</a><a href="#p3">Отдых и восстановление</a><a href="#p4">Все меню</a><a href="#p5">Красота, здоровье и лёгкость</a><a href="#p6">Все хиты</a><a class="jump__club" href="#clubs">Абонементы</a></nav>
   <div class="grid grid--packs"><article class="pc" data-aud="members" id="p1">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila3564-3365-4661-a530-376238393363/p1.webp" alt="" loading="lazy" style="object-position:50% 42%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila3564-3365-4661-a530-376238393363/p1.webp" alt="" width="1200" height="900" loading="lazy" decoding="async" style="object-position:50% 42%">
     <span class="pc__aud pc__aud--members"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z"/></svg>Для держателей абонемента</span>
   </div>
   <div class="pc__body">
@@ -274,11 +294,11 @@ html.is-locked{overflow:hidden}
     <p class="pc__meta"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></svg>65 занятий и практик</span></p>
     <p class="pc__in">Что внутри:</p>
     <ul class="pc__list"><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4" r="2"/><path d="M7 21l3-6 3 2v5M5 12l3-3 4 1 3 3 3 1M10 15l1-5"/></svg><span class="pc__item"><b>Антиотёк — 23 занятия</b><small>Комплекс тренировок и алгоритмов заботы о себе, которые помогают снизить задержку жидкости, избавиться от отёков и снизить вес</small><em class="pc__flag">*без интерактива в чатах</em></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3c0 4 2 5 2 9s-2 5-2 9M16 3c0 4-2 5-2 9s2 5 2 9M9 12h6"/></svg><span class="pc__item"><b>Стройный живот — 21 занятие</b><small>10 дней для тонкой талии: шагательные тренировки, зарядки и пилатес, меню с рецептами и забота о теле</small></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v9l-3 9h4l2-6 1 6h3l-2-11V2"/></svg><span class="pc__item"><b>Стройные ноги — 21 занятие</b><small>Тренировки для ног с заботой о суставах и сосудах, самомассаж, вебинар с флебологом и гайды по уходу за кожей</small></span></li></ul>
-    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца</p><p class="pc__price"><s>1 990 ₽</s><b>990 ₽</b><i>−50%</i></p><button class="pc__buy" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><details class="pk__alt"><summary>Нет абонемента или он меньше 30 дней: 2 490 ₽</summary><div class="pk__opt"><p class="pk__optt">Программа «Стройное тело» с полным доступом в клуб на 1 месяц</p><p class="pk__cond">Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей</p><p class="pc__price"><b>2 490 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button" data-widget="1680932" data-sid="17f61cde9d792126916573ffe82abb855e214f52" data-title="Программа «Стройное тело» с полным доступом в клуб на 1 месяц" data-price="2 490 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></details></div></div>
+    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца</p><p class="pc__price"><s>1 990 ₽</s><b>990 ₽</b><i>−50%</i></p><button class="pc__buy" type="button" data-title="Стройное тело" data-price="990 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><details class="pk__alt"><summary><span class="pk__altq"><b>Нет абонемента или осталось меньше 30 дней?</b><span>Программа и полный доступ в клуб на месяц — 2 490 ₽</span></span><span class="pk__altgo"><span class="pk__alt-o">Развернуть</span><span class="pk__alt-c">Свернуть</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></summary><div class="pk__opt"><p class="pk__optt">Программа «Стройное тело» с полным доступом в клуб на 1 месяц</p><p class="pk__cond">Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей</p><p class="pc__price"><b>2 490 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button" data-widget="1680932" data-sid="17f61cde9d792126916573ffe82abb855e214f52" data-title="Программа «Стройное тело» с полным доступом в клуб на 1 месяц" data-price="2 490 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></details></div></div>
   </div>
 </article><article class="pc" data-aud="new" id="p2">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila3832-3834-4237-b761-306337636331/fitness.webp" alt="" loading="lazy" style="object-position:50% 28%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila3832-3834-4237-b761-306337636331/fitness.webp" alt="" width="1440" height="900" loading="lazy" decoding="async" style="object-position:50% 28%">
     <span class="pc__aud pc__aud--new"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Для новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -286,11 +306,11 @@ html.is-locked{overflow:hidden}
     <p class="pc__meta"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></svg>21 тренировка</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>1 месяц</span><span class="pc__chip--no"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>Без полного доступа к клубу</span></p>
     <p class="pc__in">Что внутри:</p>
     <ul class="pc__list"><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg><span class="pc__item"><b>Табата — 7 тренировок</b><small>Короткие интенсивные интервалы — быстрый способ дать телу хорошую нагрузку.</small></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20c-4 0-8-3-8-7 3 0 6 2 8 5 2-3 5-5 8-5 0 4-4 7-8 7zM12 18c-2-3-2-8 0-12 2 4 2 9 0 12z"/></svg><span class="pc__item"><b>Зумба — 7 тренировок</b><small>Почти танец: энергичная и весёлая тренировка.</small></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></svg><span class="pc__item"><b>Интервальные — 7 тренировок</b><small>Считаются самыми сложными из трёх. Для тех, кто хочет нагрузку посерьёзнее.</small></span></li></ul>
-    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Подходит, если у вас нет абонемента клуба.</p><p class="pc__price"><s>3 000 ₽</s><b>1 500 ₽</b><i>−50%</i></p><button class="pc__buy" type="button" data-widget="1680785" data-sid="e398c503c771b44edda3a589317a0cd11d810c57" data-title="Фитнес" data-price="1 500 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__optt">Клуб «ШАГАЙ ДОМА⚡️» на 1 месяц</p><p class="pk__cond">Всего на 100 ₽ дороже программ «Фитнес», зато полный доступ к клубу.</p><p class="pc__price"><b>1 600 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
+    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Подходит, если у вас нет абонемента клуба.</p><p class="pc__price"><s>3 000 ₽</s><b>1 500 ₽</b><i>−50%</i></p><button class="pc__buy" type="button" data-widget="1680785" data-sid="e398c503c771b44edda3a589317a0cd11d810c57" data-title="Фитнес" data-price="1 500 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__optt">Клуб «ШАГАЙ ДОМА⚡️» на 1 месяц</p><p class="pk__cond">Всего на 100 ₽ дороже программ «Фитнес», зато полный доступ к клубу.</p><p class="pc__price"><b>1 600 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button" data-title="Клуб «ШАГАЙ ДОМА⚡️» на 1 месяц" data-price="1 600 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
   </div>
 </article><article class="pc" data-aud="members" id="p3">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila3362-6438-4332-b531-613434316337/hits2.webp" alt="" loading="lazy" style="object-position:50% 30%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila3362-6438-4332-b531-613434316337/hits2.webp" alt="" width="1267" height="1900" loading="lazy" decoding="async" style="object-position:50% 30%">
     <span class="pc__aud pc__aud--members"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z"/></svg>Для держателей абонемента</span>
   </div>
   <div class="pc__body">
@@ -298,11 +318,52 @@ html.is-locked{overflow:hidden}
     <p class="pc__meta"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></svg>2 программы</span></p>
     <p class="pc__in">Что внутри:</p>
     <ul class="pc__list"><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L12 4l9 16zM12 4v16M9 20l3-6 3 6"/></svg><span class="pc__item"><b>Лагерь «Осень 25»</b><small>Осенняя смена лагеря клуба: лёгкость, движение и хорошее настроение</small><em class="pc__flag">*без интерактива в чатах</em></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15zM5 19l8-8"/></svg><span class="pc__item"><b>Санаторий № 1</b><small>Спа-программа дома на 2 недели: тренировки от 15 минут в день, фейс-фитнес, самомассаж, меню и медитации</small></span></li></ul>
-    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца</p><p class="pc__price"><s>1 990 ₽</s><b>990 ₽</b><i>−50%</i></p><button class="pc__buy" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><details class="pk__alt"><summary>Нет абонемента или он меньше 30 дней: 2 490 ₽</summary><div class="pk__opt"><p class="pk__optt">Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц</p><p class="pk__cond">Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей</p><p class="pc__price"><b>2 490 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button" data-widget="1680937" data-sid="178b8809a7845d433cee343c7c1c263f89534f3e" data-title="Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц" data-price="2 490 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></details></div></div>
+    <div class="pc__foot">
+<div class="pk__opts">
+<div class="pk__opt">
+<p class="pk__cond">Для держателей абонемента клуба «ШАГАЙ ДОМА⚡️», если срок абонемента не менее 1 месяца</p>
+<p class="pc__price">
+<s>1 990 ₽</s>
+<b>990 ₽</b>
+<i>−50%</i>
+</p>
+<button class="pc__buy" type="button" data-title="Отдых и восстановление" data-price="990 ₽">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>
+</svg>Купить</button>
+</div>
+<details class="pk__alt">
+<summary>
+<span class="pk__altq">
+<b>Нет абонемента или осталось меньше 30 дней?</b>
+<span>Программа и полный доступ в клуб на месяц — 2 490 ₽</span>
+</span>
+<span class="pk__altgo">
+<span class="pk__alt-o">Развернуть</span>
+<span class="pk__alt-c">Свернуть</span>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+<path d="M6 9l6 6 6-6"/>
+</svg>
+</span>
+</summary>
+<div class="pk__opt">
+<p class="pk__optt">Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц</p>
+<p class="pk__cond">Для держателей абонемента клуба ШАГАЙ ДОМА⚡️ со сроком менее 30 дней и новых пользователей</p>
+<p class="pc__price">
+<b>2 490 ₽</b>
+</p>
+<button class="pc__buy pc__buy--ghost" type="button" data-widget="1680937" data-sid="178b8809a7845d433cee343c7c1c263f89534f3e" data-title="Программа «Отдых и восстановление» с полным доступом в клуб на 1 месяц" data-price="2 490 ₽">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>
+</svg>Купить</button>
+</div>
+</details>
+</div>
+</div>
   </div>
 </article><article class="pc" data-aud="all" id="p4">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila3466-3530-4638-a164-353030633131/menu.webp" alt="" loading="lazy" style="object-position:50% 50%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila3466-3530-4638-a164-353030633131/menu.webp" alt="" width="1200" height="800" loading="lazy" decoding="async" style="object-position:50% 50%">
     <span class="pc__aud pc__aud--all"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.8 3 2.6 3.6 5.2"/></svg>Для держателей абонемента и новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -314,7 +375,7 @@ html.is-locked{overflow:hidden}
   </div>
 </article><article class="pc" data-aud="all" id="p5">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila6334-3432-4662-a665-623265373664/valeria-flowers.webp" alt="" loading="lazy" style="object-position:50% 35%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila6334-3432-4662-a665-623265373664/valeria-flowers.webp" alt="" width="600" height="449" loading="lazy" decoding="async" style="object-position:50% 35%">
     <span class="pc__aud pc__aud--all"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.8 3 2.6 3.6 5.2"/></svg>Для держателей абонемента и новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -326,7 +387,7 @@ html.is-locked{overflow:hidden}
   </div>
 </article><article class="pc" data-aud="new" id="p6">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila6262-3336-4230-b636-356536363463/hits.webp" alt="" loading="lazy" style="object-position:50% 18%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila6262-3336-4230-b636-356536363463/hits.webp" alt="" width="820" height="993" loading="lazy" decoding="async" style="object-position:50% 18%">
     <span class="pc__aud pc__aud--new"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Для новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -346,7 +407,7 @@ html.is-locked{overflow:hidden}
   <p class="shop__lead">Удваиваем абонемент на 6 месяцев или даём доступ к клубу навсегда — для тех, у кого уже есть абонемент, и для новых участников.</p>
   <div class="grid grid--clubs"><article class="pc pc--club" data-aud="all" id="c1">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila6265-6439-4161-a136-393832336139/sanatoriy.webp" alt="" loading="lazy" style="object-position:50% 36%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila6265-6439-4161-a136-393832336139/sanatoriy.webp" alt="" width="800" height="1200" loading="lazy" decoding="async" style="object-position:50% 36%">
     <span class="pc__aud pc__aud--all"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.8 3 2.6 3.6 5.2"/></svg>Для держателей абонемента и новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -356,11 +417,11 @@ html.is-locked{overflow:hidden}
     <p class="pc__meta"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>12 месяцев</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>Полный доступ к клубу</span></p>
     <p class="pc__in">Что есть в клубе:</p>
     <ul class="pc__list"><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>25 фитнес-программ и курсов, больше 400 тренировок</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>План тренировок на каждый день недели</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Тренировки от 5 до 40 минут</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Шагай.FM — фитнес-эфир нон-стоп под треки DJ</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Шаговая аэробика под музыку: не нужно быть спортивной или уметь танцевать</b></span></li></ul>
-    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Участникам клуба</p><p class="pc__price"><b>3 800 ₽</b></p><p class="pc__month">Выходит по 317 ₽ за месяц</p><button class="pc__buy" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__cond">Новым участникам</p><p class="pc__price"><b>4 400 ₽</b></p><p class="pc__month">Выходит по 367 ₽ за месяц</p><button class="pc__buy pc__buy--ghost" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
+    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Новым участникам</p><p class="pc__price"><b>4 400 ₽</b></p><p class="pc__month">Выходит по 367 ₽ за месяц</p><button class="pc__buy" type="button" data-title="Клуб «Удвоение 6+6»" data-price="4 400 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__cond">Участникам клуба</p><p class="pc__price"><b>3 800 ₽</b></p><p class="pc__month">Выходит по 317 ₽ за месяц</p><button class="pc__buy pc__buy--ghost" type="button" data-title="Клуб «Удвоение 6+6»" data-price="3 800 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
   </div>
 </article><article class="pc pc--club" data-aud="all" id="c2">
   <div class="pc__media">
-    <img class="pc__photo" src="https://static.tildacdn.com/tila3539-6436-4033-b035-626639656233/club2.webp" alt="" loading="lazy" style="object-position:50% 22%">
+    <img class="pc__photo" src="https://static.tildacdn.com/tila3539-6436-4033-b035-626639656233/club2.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async" style="object-position:50% 22%">
     <span class="pc__aud pc__aud--all"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.8 3 2.6 3.6 5.2"/></svg>Для держателей абонемента и новых пользователей</span>
   </div>
   <div class="pc__body">
@@ -370,7 +431,7 @@ html.is-locked{overflow:hidden}
     <p class="pc__meta"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Бессрочно</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>Полный доступ к клубу</span></p>
     <p class="pc__in">Что есть в клубе:</p>
     <ul class="pc__list"><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>25 фитнес-программ и курсов, больше 400 тренировок</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>План тренировок на каждый день недели</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Тренировки от 5 до 40 минут</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Шагай.FM — фитнес-эфир нон-стоп под треки DJ</b></span></li><li><svg class="pc__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><span class="pc__item"><b>Шаговая аэробика под музыку: не нужно быть спортивной или уметь танцевать</b></span></li></ul>
-    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Новым участникам</p><p class="pc__price"><b>9 990 ₽</b></p><button class="pc__buy" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__cond">Участникам клуба</p><p class="pc__price"><b>7 990 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
+    <div class="pc__foot"><div class="pk__opts"><div class="pk__opt"><p class="pk__cond">Новым участникам</p><p class="pc__price"><b>9 990 ₽</b></p><button class="pc__buy" type="button" data-title="Клуб «Навсегда»" data-price="9 990 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div><div class="pk__opt"><p class="pk__cond">Участникам клуба</p><p class="pc__price"><b>7 990 ₽</b></p><button class="pc__buy pc__buy--ghost" type="button" data-title="Клуб «Навсегда»" data-price="7 990 ₽"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg>Купить</button></div></div></div>
   </div>
 </article></div>
 </div></section>
@@ -464,7 +525,7 @@ html.is-locked{overflow:hidden}
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span></div>
+  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span><div class="paydlg__slot paydlg__note" id="slot-note" hidden><p><b>Оплата этого варианта на сайте пока не подключена.</b></p><p>Чтобы купить сейчас, позвоните в отдел заботы о клиентах: <a href="tel:+79990668100">+7 (999) 066-81-00</a></p></div></div>
 </dialog>
 </div>
 <script>
@@ -513,6 +574,18 @@ html.is-locked{overflow:hidden}
   dlg.querySelector('.paydlg__x').addEventListener('click', close);
   dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
 
+  var note = document.getElementById('slot-note');
+  Array.prototype.forEach.call(document.querySelectorAll('.pc__buy:not([data-widget])'), function (btn) {
+    btn.addEventListener('click', function () {
+      if (!note) return;
+      dlg.querySelector('.paydlg__t').textContent = btn.dataset.title || '';
+      dlg.querySelector('.paydlg__p').textContent = btn.dataset.price || '';
+      Array.prototype.forEach.call(body.querySelectorAll('.paydlg__slot'), function (x) { x.hidden = x !== note; });
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      syncLock();
+    });
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll('.pc__buy[data-widget]'), function (btn) {
     btn.addEventListener('click', function () {
       var sid = btn.dataset.sid;
@@ -540,17 +613,6 @@ html.is-locked{overflow:hidden}
       syncLock();
     });
   });
-})();
-
-(function () {
-  var els = document.querySelectorAll('.rv, .pc, .qa, .shop .h2, .faq .h2, .how .h2');
-  if (!('IntersectionObserver' in window) || !els.length) return;
-  document.documentElement.classList.add('js');
-  Array.prototype.forEach.call(els, function (el) { el.classList.add('rv'); });
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' });
-  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
 })();
 
 }

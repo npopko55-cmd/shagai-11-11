@@ -35,7 +35,8 @@ IMG_BASE = args.img_base.rstrip('/')
 html = (SRC / 'index.html').read_text(encoding='utf-8')
 css = (SRC / 'styles.css').read_text(encoding='utf-8')
 js = (SRC / 'app.js').read_text(encoding='utf-8')
-FONT_LINK = re.search(r'<link[^>]+fonts\.googleapis\.com/css2[^>]*>', html).group(0)
+# С 63cf352 /v5/ берёт шрифты из своей папки fonts/ — в Тильде её нет, поэтому здесь шрифты по-прежнему с Google Fonts.
+FONT_LINK = '<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">'
 
 # ---------- CSS: изоляция в .shd1111, правки под Тильду, base64 ----------
 css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)

@@ -71,7 +71,7 @@
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span></div>
+  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span><div class="paydlg__slot paydlg__note" id="slot-note" hidden><p><b>Оплата этого варианта на сайте пока не подключена.</b></p><p>Чтобы купить сейчас, позвоните в отдел заботы о клиентах: <a href="tel:+79990668100">+7 (999) 066-81-00</a></p></div></div>
 </dialog>
 </div>
 <script>
@@ -120,6 +120,18 @@
   dlg.querySelector('.paydlg__x').addEventListener('click', close);
   dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
 
+  var note = document.getElementById('slot-note');
+  Array.prototype.forEach.call(document.querySelectorAll('.pc__buy:not([data-widget])'), function (btn) {
+    btn.addEventListener('click', function () {
+      if (!note) return;
+      dlg.querySelector('.paydlg__t').textContent = btn.dataset.title || '';
+      dlg.querySelector('.paydlg__p').textContent = btn.dataset.price || '';
+      Array.prototype.forEach.call(body.querySelectorAll('.paydlg__slot'), function (x) { x.hidden = x !== note; });
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      syncLock();
+    });
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll('.pc__buy[data-widget]'), function (btn) {
     btn.addEventListener('click', function () {
       var sid = btn.dataset.sid;
@@ -147,17 +159,6 @@
       syncLock();
     });
   });
-})();
-
-(function () {
-  var els = document.querySelectorAll('.rv, .pc, .qa, .shop .h2, .faq .h2, .how .h2');
-  if (!('IntersectionObserver' in window) || !els.length) return;
-  document.documentElement.classList.add('js');
-  Array.prototype.forEach.call(els, function (el) { el.classList.add('rv'); });
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' });
-  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
 })();
 
 }

@@ -136,11 +136,19 @@ button { font: inherit; color: inherit; }
 .shop { padding-top: 28px; }
 .shop .grid { margin-top: 0; }
 .pc__flag { display: inline-block; margin-top: 5px; padding: 3px 9px; border-radius: 999px; background: #fff0f6; color: var(--pink); font: 700 12px/1.3 var(--font-h); }
-.pk__alt { border: 1px solid var(--line); border-radius: 20px; background: #fcfaff; }
-.pk__alt summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 16px; color: var(--violet); font: 700 14.5px/1.35 var(--font-h); cursor: pointer; list-style: none; }
+.pk__alt { border: 1.5px solid #c9a8fb; border-radius: 20px; background: linear-gradient(180deg, #f3e9ff 0%, #fbf7ff 100%); box-shadow: 0 8px 20px rgba(123, 47, 242, .1); }
+.pk__alt summary { display: flex; flex-direction: column; gap: 12px; padding: 16px; cursor: pointer; list-style: none; border-radius: 18px; -webkit-tap-highlight-color: transparent; }
 .pk__alt summary::-webkit-details-marker { display: none; }
-.pk__alt summary::after { content: '+'; flex: none; font-size: 20px; font-weight: 800; }
-.pk__alt[open] summary::after { content: '−'; }
+.pk__alt summary:focus-visible { outline: 3px solid #c8a8ff; outline-offset: 2px; }
+.pk__altq b { display: block; color: var(--ink); font: 800 15px/1.3 var(--font-h); }
+.pk__altq span { display: block; margin-top: 4px; color: var(--violet); font: 700 14.5px/1.35 var(--font-h); }
+.pk__altgo { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 16px; border: 1.5px solid var(--violet); border-radius: 14px; background: #fff; color: var(--violet); font: 700 15.5px/1.2 var(--font-h); transition: background .2s, color .2s; }
+.pk__alt summary:hover .pk__altgo { background: var(--violet); color: #fff; }
+.pk__altgo .ic { width: 20px; height: 20px; stroke-width: 2.4; transition: transform .2s; }
+.pk__alt-c, .pk__alt[open] .pk__alt-o { display: none; }
+.pk__alt[open] .pk__alt-c { display: inline; }
+.pk__alt[open] .pk__altgo .ic { transform: rotate(180deg); }
+.pk__alt[open] summary { padding-bottom: 12px; }
 .pk__alt .pk__opt { margin: 0 8px 8px; border: 0; background: #fff; }
 .pc__month { margin-top: 6px; color: var(--violet); font: 700 14px/1.3 var(--font-h); }
 .pc__foot .pc__month { margin-top: 4px; }
@@ -264,6 +272,7 @@ button { font: inherit; color: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .pk__altgo, .pk__altgo .ic { transition: none; }
   .btn, .pc__buy { transition: none; }
   .paydlg__spin { animation-duration: 2s; }
 }

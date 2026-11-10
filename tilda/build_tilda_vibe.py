@@ -23,7 +23,8 @@ HIDE_PROJECT_PARTS = '<style>#rec953993826,#rec1696909601,#rec4977556901,#rec660
 html = (SRC / 'index.html').read_text(encoding='utf-8')
 css = (SRC / 'styles.css').read_text(encoding='utf-8')
 js = (SRC / 'app.js').read_text(encoding='utf-8')
-FONT_LINK = re.search(r'<link[^>]+fonts\.googleapis\.com/css2[^>]*>', html).group(0)
+# С 63cf352 /v5/ берёт шрифты из своей папки fonts/ — в Тильде её нет, поэтому здесь шрифты по-прежнему с Google Fonts.
+FONT_LINK = '<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">'
 
 css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
 css += ('\n.top{position:fixed;left:0;right:0;top:0;z-index:990}'
