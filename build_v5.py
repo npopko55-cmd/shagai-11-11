@@ -42,7 +42,9 @@ CLUBS = [
     dict(id='c1', aud='all', img='sanatoriy', pos='50% 36%', mpos='50% 36%', title='Клуб «Удвоение\u00a06+6»',
          line='6 месяцев абонемента и ещё 6 в подарок', chips=[('clock', '12 месяцев'), ('check', 'Полный доступ к клубу')],
          about='Платите за 6 месяцев абонемента и получаете ещё 6 в подарок. Итого 12 месяцев полного доступа к тренировкам и программам клуба. Цены распродажи действуют 10–12 ноября.',
-         mem=3800, new=4400, card_price=('от', 3800), new_first=True, month=('Выходит от 317 ₽ за месяц', 'Выходит по 317 ₽ за месяц', 'Выходит по 367 ₽ за месяц')),
+         mem=3800, new=4400, card_price=('от', 3800), new_first=True,
+         # виджеты GetCourse от Ани, 10.11: (номер, id скрипта)
+         mem_w=('1681432', '7018af0150b7060df01b222f88fc2208baa5ce44'), new_w=('1681429', 'c06de214a59b9c1aed42942fcfefed2906fe2b5f'), month=('Выходит от 317 ₽ за месяц', 'Выходит по 317 ₽ за месяц', 'Выходит по 367 ₽ за месяц')),
     dict(id='c2', aud='all', img='club2', pos='50% 22%', mpos='50% 22%', title='Клуб «Навсегда»',
          line='Абонемент, который не нужно продлевать', chips=[('clock', 'Бессрочно'), ('check', 'Полный доступ к клубу')],
          about='Полный доступ к клубу без ограничения срока: можно заниматься дома в удобном ритме и возвращаться к любимым тренировкам. Цены распродажи действуют 10–12 ноября.',
@@ -213,8 +215,8 @@ def club_card(c):
     m1 = f'<p class="pc__month">{t(mo[1])}</p>' if mo else ''
     m2 = f'<p class="pc__month">{t(mo[2])}</p>' if mo else ''
     # порядок цен: «Навсегда» — сначала 9 990 ₽ для новых (Мария 09.11), 6+6 — сначала участникам
-    o_mem = option(CLUB_T['MEM'], price_row(0, c['mem']) + m1, buy_btn(c['title'], c['mem'], ghost=c.get('new_first', False)))
-    o_new = option(CLUB_T['NEW'], price_row(0, c['new']) + m2, buy_btn(c['title'], c['new'], ghost=not c.get('new_first', False)))
+    o_mem = option(CLUB_T['MEM'], price_row(0, c['mem']) + m1, buy_btn(c['title'], c['mem'], *c.get('mem_w', (None, None)), ghost=c.get('new_first', False)))
+    o_new = option(CLUB_T['NEW'], price_row(0, c['new']) + m2, buy_btn(c['title'], c['new'], *c.get('new_w', (None, None)), ghost=not c.get('new_first', False)))
     opts = (o_new + o_mem) if c.get('new_first') else (o_mem + o_new)
     return f'''<article class="pc pc--club" data-aud="{c["aud"]}" id="{c["id"]}">
   <div class="pc__media">
