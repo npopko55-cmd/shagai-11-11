@@ -1,4 +1,5 @@
-// v5 (10.11): кнопки с виджетом открывают форму GetCourse, кнопки без виджета — сообщение с телефоном. Формы не заполняются.
+// v5 (10.11): кнопки с виджетом открывают форму GetCourse, кнопки без виджета — сообщение с телефоном,
+// кнопки-ссылки (990 ₽, data-link) ведут на GetCourse с метками из адреса страницы. Формы не заполняются, по ссылкам не переходим.
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 const CH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -25,7 +26,7 @@ const out = await ev(`(async () => {
   o.jump = getComputedStyle(document.querySelector('.jump')).display + ', ссылок ' + document.querySelectorAll('.jump a').length + ', цели есть: ' + [...document.querySelectorAll('.jump a')].every(a => document.querySelector(a.getAttribute('href')));
   const wait = ms => new Promise(r => setTimeout(r, ms));
   o.note = [];
-  for (const btn of document.querySelectorAll('.pc__buy:not([data-widget])')) { btn.click(); await wait(250);
+  for (const btn of document.querySelectorAll('button.pc__buy:not([data-widget])')) { btn.click(); await wait(250);
     const ok = dlg.open && !note.hidden && note.offsetHeight > 40 && !!note.querySelector('a[href^="tel:"]') && [...dlg.querySelectorAll('.paydlg__slot')].filter(x => !x.hidden).length === 1 && document.documentElement.classList.contains('is-locked');
     o.note.push((ok ? 'ok' : 'ПРОБЛЕМА') + ' · ' + dlg.querySelector('.paydlg__t').textContent.slice(0, 34) + ' · ' + dlg.querySelector('.paydlg__p').textContent); dlg.close(); await wait(80); }
   o.forms = [];
@@ -33,11 +34,16 @@ const out = await ev(`(async () => {
     for (let i = 0; i < 50; i++) { await wait(400); const f = document.querySelector('#slot-' + btn.dataset.sid + ' iframe'); h = f ? parseInt(f.style.height) || 0 : 0; if (h > 50) break; }
     o.forms.push((h > 50 && note.hidden ? 'ok' : 'ПРОБЛЕМА') + ' · ' + btn.dataset.widget + ' · ' + btn.dataset.price + ' · форма ' + h + 'px'); dlg.close(); await wait(80); }
   // после формы снова сообщение: слоты не должны накладываться
-  const b = document.querySelector('.pc__buy:not([data-widget])');
+  const b = document.querySelector('button.pc__buy:not([data-widget])');
   if (b) { b.click(); await wait(250);
     o.afterForm = (!note.hidden && [...dlg.querySelectorAll('.paydlg__slot')].filter(x => !x.hidden).length === 1) ? 'ok' : 'ПРОБЛЕМА'; dlg.close(); await wait(100); }
   else o.afterForm = 'кнопок без виджета нет';
+  // ссылки 990 ₽: адрес GetCourse и все метки из адреса страницы (по ссылке не переходим)
+  const pq = new URLSearchParams(location.search);
+  o.links = [...document.querySelectorAll('a.pc__buy[data-link]')].map(a => { const u = new URL(a.href);
+    const miss = [...pq.keys()].filter(k => u.searchParams.get(k) !== pq.get(k));
+    return (u.host === 'my.walk-walk.ru' && !miss.length ? 'ok' : 'ПРОБЛЕМА') + ' · ' + a.href + (miss.length ? ' · нет меток: ' + miss : ''); });
   o.unlocked = !document.documentElement.classList.contains('is-locked');
   return o; })()`);
-if (SHOT && await ev(`!!document.querySelector('.pc__buy:not([data-widget])')`)) { await ev(`document.querySelector('.pc__buy:not([data-widget])').scrollIntoView({block:'center', behavior:'instant'}); document.querySelector('.pc__buy:not([data-widget])').click()`); await sleep(600); const s = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(SHOT, Buffer.from(s.result.data, 'base64')); }
+if (SHOT && await ev(`!!document.querySelector('button.pc__buy:not([data-widget])')`)) { await ev(`document.querySelector('button.pc__buy:not([data-widget])').scrollIntoView({block:'center', behavior:'instant'}); document.querySelector('button.pc__buy:not([data-widget])').click()`); await sleep(600); const s = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(SHOT, Buffer.from(s.result.data, 'base64')); }
 out.errors = errors; console.log(JSON.stringify(out, null, 1)); chrome.kill(); process.exit(0);

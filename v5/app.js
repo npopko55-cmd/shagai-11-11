@@ -29,6 +29,17 @@
     } catch (err) {}
   }
 
+  /* Кнопки-ссылки на GetCourse (990 ₽ с проверкой «своих»): те же метки дописываем в адрес ссылки */
+  if (params.length) {
+    Array.prototype.forEach.call(document.querySelectorAll('a.pc__buy[data-link]'), function (a) {
+      try {
+        var lu = new URL(a.href);
+        for (var j = 0; j < params.length; j++) lu.searchParams.set(params[j][0], params[j][1]);
+        a.href = lu.href;
+      } catch (err) {}
+    });
+  }
+
   /* Прокрутка страницы заблокирована, пока открыто хоть одно окно (окно пака или окно оплаты поверх него) */
   function syncLock() {
     document.documentElement.classList.toggle('is-locked', !!document.querySelector('dialog[open]'));
@@ -47,7 +58,7 @@
 
   /* Кнопки без виджета GetCourse: вместо формы — сообщение с телефоном отдела заботы (текст в разметке, #slot-note) */
   var note = document.getElementById('slot-note');
-  Array.prototype.forEach.call(document.querySelectorAll('.pc__buy:not([data-widget])'), function (btn) {
+  Array.prototype.forEach.call(document.querySelectorAll('button.pc__buy:not([data-widget])'), function (btn) {
     btn.addEventListener('click', function () {
       if (!note) return;
       dlg.querySelector('.paydlg__t').textContent = btn.dataset.title || '';

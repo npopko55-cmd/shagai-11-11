@@ -108,6 +108,9 @@ def li_icon(name):
 
 def buy_btn(title, price, widget=None, sid=None, ghost=False):
     cls = 'pc__buy' + (' pc__buy--ghost' if ghost else '')
+    if widget and widget.startswith('https://'):
+        # ссылка на страницу GetCourse (990 ₽ с проверкой «своих»); метки дописывает app.js
+        return f'<a class="{cls}" href="{html.escape(widget)}" data-link>' + icon('bag') + 'Купить</a>'
     data = f' data-title="{html.escape(title)}" data-price="{rub(price)}"'
     if widget:
         data = f' data-widget="{widget}" data-sid="{sid}"' + data
@@ -176,7 +179,7 @@ def contents(p):
         meta += '<span class="pc__chip--no">' + icon('ban') + t(p['note']) + '</span>'
     opts = ''
     if p.get('opts'):
-        # «Стройное тело» и «Отдых»: 990 ₽ держателям (виджета пока нет — кнопка без действия) + 2 490 ₽ с клубом на месяц (виджет GetCourse)
+        # «Стройное тело» и «Отдых»: 990 ₽ держателям (ссылка GetCourse с проверкой) + 2 490 ₽ с клубом на месяц (виджет GetCourse)
         for n, o in enumerate(p['opts']):
             cap, title_o, old_o, price_o = o[:4]
             w, sid = (o[4], o[5]) if len(o) > 4 else (None, None)
