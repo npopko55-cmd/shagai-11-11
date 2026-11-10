@@ -182,9 +182,10 @@ def contents(p):
     else:
         opts += option(AUD_COND.get(p['aud']), price_row(p['old'], p['price']), buy_btn(name(p), p['price'], p['widget'], p['sid']))
         if p.get('extra'):
-            # «Фитнес»: клуб на месяц за 1 600 ₽ — виджета нет, кнопка без действия
-            et, es, ep = p['extra']
-            opts += option(es, price_row(0, ep), buy_btn(et, ep, ghost=True), et)
+            # «Фитнес»: клуб на месяц за 1 600 ₽ — виджет 1681202 (Аня, 10.11)
+            et, es, ep = p['extra'][:3]
+            ew, esid = (p['extra'][3], p['extra'][4]) if len(p['extra']) > 3 else (None, None)  # виджет GetCourse, если Аня его дала
+            opts += option(es, price_row(0, ep), buy_btn(et, ep, ew, esid, ghost=True), et)
     return (f'{lead}{about}\n    <p class="pc__meta">{meta}</p>\n    <p class="pc__in">Что внутри:</p>\n    <ul class="pc__list">{rows}</ul>\n'
             f'    <div class="pc__foot"><div class="pk__opts">{opts}</div></div>')
 
