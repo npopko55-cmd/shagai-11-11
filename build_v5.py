@@ -46,6 +46,17 @@ CLUBS = [
 ]
 
 
+# Превью ссылки в мессенджерах и meta description (текст — na-pero 10.11.2026)
+SITE_URL = 'https://npopko55-cmd.github.io/shagai-11-11/v5/'
+PAGE_TITLE = 'Распродажа 11.11 — программы и абонементы клуба «Шагай Дома»'
+META_DESC = 'Программы клуба домашних тренировок «Шагай Дома» со скидкой 50% и абонементы «Удвоение 6+6» и «Навсегда». Цены действуют с 10 по 12 ноября.'
+# Сообщение по кнопке «Купить», к которой ещё нет виджета GetCourse (990 ₽ ×2, клуб 1 600 ₽, абонементы ×4). Текст — na-pero 10.11.2026.
+# Телефон — первый из подвала (отдел заботы о клиентах). Когда виджет появится, кнопке достаточно дать widget и sid.
+NOTICE_T = 'Оплата этого варианта на сайте пока не подключена.'
+NOTICE_P = 'Чтобы купить сейчас, позвоните в отдел заботы о клиентах:'
+NOTICE_TEL = ('+79990668100', '+7\u00a0(999)\u00a0066-81-00')
+
+
 def name(p):
     # 10.11 (Мария и Дима): слово «набор» убрано — название программы без приставки
     return p['title']
@@ -87,7 +98,9 @@ def li_icon(name):
 
 def buy_btn(title, price, widget=None, sid=None, ghost=False):
     cls = 'pc__buy' + (' pc__buy--ghost' if ghost else '')
-    data = (f' data-widget="{widget}" data-sid="{sid}" data-title="{html.escape(title)}" data-price="{rub(price)}"' if widget else '')
+    data = f' data-title="{html.escape(title)}" data-price="{rub(price)}"'
+    if widget:
+        data = f' data-widget="{widget}" data-sid="{sid}"' + data
     return f'<button class="{cls}" type="button"{data}>' + icon('bag') + 'Купить</button>'
 
 
@@ -98,11 +111,26 @@ AUD_COND = {'members': d.HOLDER, 'new': T['AUD_NEW_EXPL'], 'all': T['AUD_ALL_EXP
 COND_TBD = 'Условия уточняются'  # плейсхолдер, если для кнопки нет условий в материалах
 
 
+def img_size(name):
+    """Размер картинки из assets (заголовок WebP: VP8X, VP8L или VP8) — для width/height в разметке."""
+    import struct
+    data = (OUT / 'assets' / (name + '.webp')).read_bytes()[:40]
+    kind = data[12:16]
+    if kind == b'VP8X':
+        return int.from_bytes(data[24:27], 'little') + 1, int.from_bytes(data[27:30], 'little') + 1
+    if kind == b'VP8L':
+        bits = struct.unpack('<I', data[21:25])[0]
+        return (bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1
+    w, h = struct.unpack('<HH', data[26:30])
+    return w & 0x3FFF, h & 0x3FFF
+
+
 def photo(p, modal=False):
     img, pos = PHOTO.get(p['id'], (p['img'], p['pos']))
     if modal:
         pos = p.get('mpos') or MPOS.get(p['id'], pos)
-    return f'<img class="pc__photo" src="assets/{img}.webp" alt="" loading="lazy" style="object-position:{pos}">'
+    w, h = img_size(img)
+    return f'<img class="pc__photo" src="assets/{img}.webp" alt="" width="{w}" height="{h}" loading="lazy" decoding="async" style="object-position:{pos}">'
 
 
 def price_row(old, price):
@@ -199,9 +227,7 @@ def club_card(c):
 
 
 def page():
-    legend = ''.join(
-        f'<li class="lg lg--{k}"><span class="lg__ic">{icon(AUD[k][1])}</span><div><b>{t(AUD[k][0])}</b><p>{t(x)}</p></div></li>'
-        for k, x in [('members', d.HOLDER), ('new', T['AUD_NEW_EXPL']), ('all', T['AUD_ALL_EXPL'])])
+    jump = ''.join(f'<a href="#{p["id"]}">{t(p["title"])}</a>' for p in PACKS) + '<a class="jump__club" href="#clubs">Абонементы</a>'
     steps = ''.join(f'<li><b class="steps__n">{i}</b><p>{t(s)}</p></li>' for i, s in enumerate(T['HOW'], 1))
     faq = ''.join(f'<details class="qa"><summary>{t(q)}</summary><p>{t(a)}</p></details>' for q, a in T['FAQ'])
     return f'''<!doctype html>
@@ -209,11 +235,23 @@ def page():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Распродажа 11.11 — программы и абонементы клуба «Шагай Дома»</title>
+<title>{PAGE_TITLE}</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#f6f0ff">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<meta name="description" content="{html.escape(META_DESC)}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Шагай Дома">
+<meta property="og:title" content="{html.escape(PAGE_TITLE)}">
+<meta property="og:description" content="{html.escape(META_DESC)}">
+<meta property="og:url" content="{SITE_URL}">
+<meta property="og:image" content="{SITE_URL}assets/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body id="top">
@@ -235,7 +273,7 @@ def page():
     <span class="hero__blob"></span>
     <p class="hero__num">11<i>.</i>11</p>
     <span class="ring ring--back"></span>
-    <img class="hero__cut" src="assets/hero-cut.webp" alt="">
+    <img class="hero__cut" src="assets/hero-cut.webp" alt="" width="{img_size("hero-cut")[0]}" height="{img_size("hero-cut")[1]}" fetchpriority="high">
     <span class="ring ring--front"></span>
     <p class="hero__card">Любимые программы клуба со&nbsp;скидкой</p>
   </div>
@@ -243,6 +281,7 @@ def page():
 
 <section class="shop" id="packs"><div class="wrap">
   <h2 class="sr-only">Программы распродажи</h2>
+  <nav class="jump" aria-label="Разделы страницы">{jump}</nav>
   <div class="grid grid--packs">{"".join(card(p) for p in PACKS)}</div>
 </div></section>
 
@@ -267,7 +306,7 @@ def page():
 <dialog class="paydlg" id="paydlg" aria-labelledby="paydlg-t">
   <div class="paydlg__head"><div><p class="paydlg__t" id="paydlg-t"></p><p class="paydlg__p"></p></div>
   <button class="paydlg__x" type="button" aria-label="Закрыть">{icon("x")}</button></div>
-  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span></div>
+  <div class="paydlg__body"><span class="paydlg__spin" aria-hidden="true"></span><div class="paydlg__slot paydlg__note" id="slot-note" hidden><p><b>{t(NOTICE_T)}</b></p><p>{t(NOTICE_P)} <a href="tel:{NOTICE_TEL[0]}">{NOTICE_TEL[1]}</a></p></div></div>
 </dialog>
 <script src="app.js"></script>
 </body>

@@ -69,26 +69,10 @@ button { font: inherit; color: inherit; }
 
 /* блок паков */
 .shop { padding: 44px 0 16px; }
-.kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; color: var(--ink2); font: 700 12px/1.2 var(--font-b); letter-spacing: .04em; text-transform: uppercase; }
-.kicker span { padding: 7px 14px; border-radius: 999px; background: #ffe1ee; color: var(--pink); font-weight: 800; letter-spacing: .06em; }
+
 .h2 { margin-top: 14px; font: 800 40px/1.05 var(--font-h); letter-spacing: -.03em; }
 .h2--s { margin-top: 0; font-size: 30px; }
 .shop__lead { margin-top: 12px; color: var(--ink2); font-size: 15.5px; }
-.legend { display: grid; gap: 12px; margin-top: 22px; }
-.lg { display: flex; gap: 12px; padding: 16px 18px; border-radius: 20px; background: rgba(255, 255, 255, .85); box-shadow: var(--sh); }
-.lg__ic { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 34px; border-radius: 50%; background: #f1e8ff; color: var(--violet); }
-.lg__ic .ic { width: 18px; height: 18px; }
-.lg--new .lg__ic { background: #ffe6f0; color: var(--pink); }
-.lg b { display: block; color: var(--ink); font: 800 14.5px/1.3 var(--font-h); }
-.lg--new b { color: var(--pink); }
-.lg--all b { color: var(--violet); }
-.lg p { margin-top: 4px; color: var(--muted); font-size: 13.5px; line-height: 1.4; }
-.chips { display: flex; gap: 10px; margin: 20px -16px 0; padding: 0 16px 6px; overflow-x: auto; scrollbar-width: none; }
-.chips::-webkit-scrollbar { display: none; }
-.chip { flex: none; display: inline-flex; align-items: center; gap: 10px; padding: 11px 12px 11px 20px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: 700 14.5px/1.2 var(--font-h); cursor: pointer; box-shadow: 0 4px 12px rgba(80, 30, 160, .05); }
-.chip i { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border-radius: 50%; background: var(--soft); color: var(--muted); font: 700 12px/1 var(--font-h); }
-.chip.is-on { border-color: transparent; background: var(--grad); color: #fff; box-shadow: 0 10px 22px rgba(123, 47, 242, .3); }
-.chip.is-on i { background: #fff; color: var(--violet); }
 
 .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 22px; }
 .pc { display: flex; flex-direction: column; padding: 10px; border-radius: 26px; background: rgba(255, 255, 255, .92); box-shadow: var(--sh); }
@@ -116,7 +100,7 @@ button { font: inherit; color: inherit; }
 .pc__meta .ic { width: 15px; height: 15px; }
 .pc__meta .pc__chip--no { background: #fff0f6; color: var(--pink); }
 .pc__foot { margin-top: auto; padding-top: 16px; }
-.pc__cap { margin-bottom: 6px; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+
 .pc__price { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 .pc__price s { color: #8c84a3; font: 700 16px/1 var(--font-h); text-decoration-thickness: 1.5px; }
 .pc__price b { color: var(--pink); font: 800 34px/1 var(--font-h); letter-spacing: -.02em; }
@@ -127,26 +111,7 @@ button { font: inherit; color: inherit; }
 .pc__buy:active { transform: scale(.985); }
 .pc__buy--ghost { width: auto; min-height: 44px; margin-top: 0; padding: 10px 18px; background: #fff; color: var(--violet); border: 1.5px solid #d9c6fb; box-shadow: none; font-size: 15px; }
 .pc__buy--ghost .ic { width: 18px; height: 18px; }
-.pc__alt { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #dccff2; }
-.pc__altt { font: 800 14px/1.3 var(--font-h); }
-.pc__altl { margin-top: 3px; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
-.pc__altrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
-.pc__altrow b { color: var(--ink); font: 800 24px/1 var(--font-h); }
-/* превью карточки: одна строка сути и «Подробнее» (подробности — в окне пака) */
-.pc__line { margin-top: 8px; color: var(--ink2); font-size: 14.5px; line-height: 1.45; }
-.pc__more { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; margin-top: 14px; padding: 12px 18px; border: 0; border-radius: 16px; background: var(--grad); color: #fff; font: 700 18px/1.2 var(--font-h); cursor: pointer; box-shadow: 0 12px 24px rgba(123, 47, 242, .28); transition: filter .2s, transform .15s; }
-.pc__more:hover { filter: brightness(1.07); }
-.pc__more:active { transform: scale(.985); }
 
-/* окно пака: на телефоне почти на весь экран снизу, на десктопе — карточка по центру */
-.pk { width: 100%; max-width: 100%; height: calc(100dvh - 12px); max-height: none; margin: auto 0 0; padding: 0; border: 0; border-radius: 26px 26px 0 0; background: #fff; color: var(--ink); overflow: hidden; box-shadow: 0 -12px 40px rgba(29, 20, 56, .25); }
-.pk[open] { display: flex; flex-direction: column; }
-.pk::backdrop { background: rgba(29, 20, 56, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-.pk__in { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-.pk__x { position: absolute; top: 12px; right: 12px; z-index: 3; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .96); color: var(--ink); cursor: pointer; box-shadow: 0 6px 18px rgba(30, 10, 60, .18); }
-.pk__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #efe9f7; }
-.pk__body { padding: 20px 18px 28px; }
-.pk__body .pc__t { font-size: 28px; }
 .pk__opts { display: grid; gap: 12px; margin-top: 22px; }
 .pk__opt { display: flex; flex-direction: column; padding: 16px; border: 1px solid var(--line); border-radius: 20px; background: #fcfaff; }
 .pk__opt:first-child { border-color: #e2d2fb; background: linear-gradient(180deg, #f8f2ff 0%, #ffffff 100%); }
@@ -158,7 +123,7 @@ button { font: inherit; color: inherit; }
 .pk__opt:not(:first-child) .pc__price b { color: var(--ink); }
 .pk__opt .pc__buy { margin-top: 12px; }
 .pk__opt .pc__buy--ghost { width: 100%; min-height: 52px; font-size: 16px; }
-.btn:focus-visible, .chip:focus-visible, .pc__buy:focus-visible, .paydlg__x:focus-visible, .pc__more:focus-visible, .pk__x:focus-visible { outline: 3px solid #c8a8ff; outline-offset: 2px; }
+.btn:focus-visible, .pc__buy:focus-visible, .paydlg__x:focus-visible { outline: 3px solid #c8a8ff; outline-offset: 2px; }
 
 /* абонементы клуба: те же карточки, отдельный блок */
 .clubs { padding: 40px 0 0; }
@@ -179,6 +144,13 @@ button { font: inherit; color: inherit; }
 .pk__alt .pk__opt { margin: 0 8px 8px; border: 0; background: #fff; }
 .pc__month { margin-top: 6px; color: var(--violet); font: 700 14px/1.3 var(--font-h); }
 .pc__foot .pc__month { margin-top: 4px; }
+
+/* быстрые ссылки под первым экраном — только телефон: страница длинная, абонементы далеко внизу */
+.jump { display: flex; gap: 8px; margin: 0 -16px 18px; padding: 2px 16px 6px; overflow-x: auto; scrollbar-width: none; }
+.jump::-webkit-scrollbar { display: none; }
+.jump a { flex: none; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font: 700 14px/1.2 var(--font-h); text-decoration: none; box-shadow: 0 4px 12px rgba(80, 30, 160, .05); }
+.jump .jump__club { border-color: transparent; background: var(--grad); color: #fff; }
+.pc, #clubs, #how, #faq { scroll-margin-top: 78px; }
 
 /* как купить и вопросы */
 .how, .faq { padding: 40px 0 0; }
@@ -219,10 +191,15 @@ button { font: inherit; color: inherit; }
 .paydlg__body { position: relative; min-height: 260px; padding: 6px 10px 18px; }
 .paydlg__slot { position: relative; z-index: 1; background: #fff; }
 .paydlg__slot[hidden] { display: none; }
+/* сообщение вместо формы, пока к кнопке не подключён виджет */
+.paydlg__note { padding: 22px 12px 10px; font-size: 16px; line-height: 1.5; }
+.paydlg__note p + p { margin-top: 10px; color: var(--ink2); }
+.paydlg__note a { display: inline-block; margin-top: 6px; color: var(--violet); font: 800 22px/1.2 var(--font-h); text-decoration: none; white-space: nowrap; }
 .paydlg__spin { position: absolute; top: 90px; left: 50%; width: 34px; height: 34px; margin-left: -17px; border: 3px solid #efe7fd; border-top-color: var(--violet); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (min-width: 640px) {
+  .jump { display: none; }
   .wrap { padding: 0 24px; }
   .hero__h { font-size: 48px; }
   .hero__lead { font-size: 17.5px; max-width: 560px; }
@@ -234,23 +211,20 @@ button { font: inherit; color: inherit; }
   .hero__card { max-width: 200px; font-size: 18px; }
   .h2 { font-size: 56px; }
   .h2--s { font-size: 38px; }
-  .legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .chips { margin: 22px 0 0; padding: 0; flex-wrap: wrap; overflow: visible; }
+
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .clubs { padding-top: 52px; }
   .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .footer__grid { grid-template-columns: 1.4fr 1fr; gap: 32px; }
   .footer__links { grid-template-columns: 1fr 1fr; gap: 7px 22px; }
   .paydlg { width: min(560px, calc(100% - 32px)); margin: auto; border-radius: 24px; }
-  .pk { width: min(760px, calc(100% - 48px)); height: auto; max-height: calc(100dvh - 64px); margin: auto; border-radius: 28px; box-shadow: 0 30px 80px rgba(29, 20, 56, .35); }
-  .pk__media { aspect-ratio: 16 / 10; }
-  .pk__body { padding: 26px 32px 32px; }
-  .pk__body .pc__t { font-size: 32px; }
+
   .pk__opts { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-  .pk__x { top: 16px; right: 16px; }
+
   .paydlg__head { padding: 22px 24px 14px; border-radius: 24px 24px 0 0; }
 }
 @media (min-width: 1060px) {
+  .pc, #clubs, #how, #faq { scroll-margin-top: 100px; }
   .top__in { min-height: 84px; }
   .logo { width: 130px; }
   .top__nav { display: flex; gap: 40px; }
@@ -290,7 +264,7 @@ button { font: inherit; color: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .pc__buy, .pc__more { transition: none; }
+  .btn, .pc__buy { transition: none; }
   .paydlg__spin { animation-duration: 2s; }
 }
 

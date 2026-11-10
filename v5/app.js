@@ -45,6 +45,19 @@
   dlg.querySelector('.paydlg__x').addEventListener('click', close);
   dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
 
+  /* Кнопки без виджета GetCourse: вместо формы — сообщение с телефоном отдела заботы (текст в разметке, #slot-note) */
+  var note = document.getElementById('slot-note');
+  Array.prototype.forEach.call(document.querySelectorAll('.pc__buy:not([data-widget])'), function (btn) {
+    btn.addEventListener('click', function () {
+      if (!note) return;
+      dlg.querySelector('.paydlg__t').textContent = btn.dataset.title || '';
+      dlg.querySelector('.paydlg__p').textContent = btn.dataset.price || '';
+      Array.prototype.forEach.call(body.querySelectorAll('.paydlg__slot'), function (x) { x.hidden = x !== note; });
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      syncLock();
+    });
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll('.pc__buy[data-widget]'), function (btn) {
     btn.addEventListener('click', function () {
       var sid = btn.dataset.sid;
@@ -72,16 +85,4 @@
       syncLock();
     });
   });
-})();
-
-/* Появление блоков при прокрутке (v9). Без JS и при reduce-motion всё видно сразу. */
-(function () {
-  var els = document.querySelectorAll('.rv, .pc, .qa, .shop .h2, .faq .h2, .how .h2');
-  if (!('IntersectionObserver' in window) || !els.length) return;
-  document.documentElement.classList.add('js');
-  Array.prototype.forEach.call(els, function (el) { el.classList.add('rv'); });
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' });
-  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
 })();
